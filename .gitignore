@@ -1,0 +1,15 @@
+#exe file
+*.dll
+*.exe
+*.a
+*.lib
+
+#temp file
+*.swp
+*.htm
+*.ilk
+*.pdb
+*.DS_Store
+
+#debug files
+*.manifest
