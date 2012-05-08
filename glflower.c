@@ -207,7 +207,7 @@ create_petal_vbo() {
     glpetal petal = {0};
 
     v = glalloc_vector(0);
-    glset_petal(&petal, 0.50f,0.25f*0.50f, 0.50f*0.50f, 0.0f, &cs, &ce); 
+    glset_petal(&petal, 1.0f,0.25f*1.0f, 0.50f*1.0f, 0.0f, &cs, &ce); 
     push_petal_obj(&v, &petal);
 //	glprint_vector(v);
     gfcontext.pbsize = glget_vector_size(v);
@@ -286,7 +286,7 @@ gldraw_petal(glflower * pf) {
     glEnableVertexAttribArray(pvloc_cor);
 
     gltransform_flower(&pdst, pf);
-    for (ang = pf->petal.a; ang < 360; ang += 90) {
+    for (ang = 10; ang < 360; ang += 90) {
         m_s = glcreate_identify_mat4();
         m_r = glcreate_identify_mat4();
         m_m = glcreate_identify_mat4();
@@ -381,10 +381,10 @@ glrender_flower_context() {
     glset_vec3(&(f1.circle.c), 250.0f, 150.0f, 0.0f);
     f1.circle.r = 6;
     f1.petal.m = 36;
-    f1.petal.r1 = 10;
-    f1.petal.r2 = 20;
+//    f1.petal.r1 = 10;
+//    f1.petal.r2 = 20;
     f1.petal.l = 1;
-    f1.petal.a = rand() % 90;
+//    f1.petal.a = rand() % 90;
     glassign_vec3(&(f1.petal.gradient_color[0]), &cs);
     glassign_vec3(&(f1.petal.gradient_color[1]), &ce);
 

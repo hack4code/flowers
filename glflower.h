@@ -23,13 +23,21 @@
 
 typedef glvec3 glcolor;
 
+typedef struct _glarc {
+    glvec3 c;
+    glfloat r;
+    unsigned int from;
+    unsigned int to;
+} glarc;
+
+
 typedef struct _glpetal {
     glfloat m;
     glfloat r1;
     glfloat r2;
     glfloat z;
     glfloat l;
-    glangle a;
+//    glangle a;
     glvec3 gradient_color[2];
 } glpetal;
 
@@ -39,18 +47,22 @@ typedef struct _glcircle {
     glvec3 gradient_color[3];
 } glcircle;
 
-typedef struct _glarc {
-    glvec3 c;
-    glfloat r;
-    unsigned int from;
-    unsigned int to;
-} glarc;
 
 typedef struct _glflower {
     glcircle circle;
     glpetal petal;
-    glvec3 v;
 } glflower;
+
+typedef struct _glflower_obj {
+    glfloat pscalx;
+    glfloat pscaly;
+    glfloat cscalx;
+    glfloat cscaly;
+    glfloat lscalx;
+    glfloat lscaly;
+    glfloat mx;
+    glfloat my;
+} glflower_obj;
 
 typedef struct _glflower_context {
     glprograme pprg;
@@ -66,6 +78,5 @@ typedef struct _glflower_context {
 
 void glinit_flower_context();
 void glrender_flower_context();
-
 
 #endif //__GLFLOWER_H__
