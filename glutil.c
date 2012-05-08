@@ -264,5 +264,5 @@ glget_mat4_array(glmat4 * m) {
 
 //
 glfloat glang_transform(unsigned int a) {
-    return a*PI/180.f;
+    return (glfloat)(a*PI/180.f);
 }

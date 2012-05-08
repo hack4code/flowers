@@ -29,8 +29,8 @@
 
 extern const double PI;
 
-const glfloat g_view_max = 400;
-static float g_view_aspect = 2.0f/g_view_max;
+static const glfloat g_view_max = 400;
+static float g_view_aspect = 2.0f/400;
 
 static const glchar * petal_vshader = 
 {
@@ -294,8 +294,8 @@ gldraw_petal(glflower * pf) {
         glscale_mat4(m_s, pdst.petal.m);
         glUniformMatrix4fv(pvloc_mat_s, 1, true,  glget_mat4_array(m_s));
 
-        v.x = pdst.petal.l * cos(glang_transform(ang + 45));
-        v.y = pdst.petal.l * sin(glang_transform(ang + 45));
+        v.x = pdst.petal.l * (glfloat)cos(glang_transform(ang + 45));
+        v.y = pdst.petal.l * (glfloat)sin(glang_transform(ang + 45));
         v.z = 0.0f;
         glmove_mat4(m_m, &v);
         glmove_mat4(m_m, &(pdst.circle.c));

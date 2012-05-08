@@ -71,7 +71,7 @@ render(void) {
 int 
 main(int argc, char** argv)
 {
-    char * sversion;
+    //char * sversion;
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
     glutInitWindowSize(300, 300);
@@ -84,8 +84,8 @@ main(int argc, char** argv)
         fprintf(stderr, "OpenGL 2.0 not available\n");
         exit(EXIT_FAILURE);
     }
-	sversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
-    fprintf(stdout, "glsl version = %s\n", sversion);
+	//sversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+ //   fprintf(stdout, "glsl version = %s\n", sversion);
 	glinit_flower_context();
 
     glutMainLoop();
