@@ -1,4 +1,4 @@
 glshici
 =======
 
-draw css picture by opengl
+draw css picture by opengl, just for fun
