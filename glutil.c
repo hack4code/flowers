@@ -223,10 +223,10 @@ glcreate_identify_mat4() {
 }
 
 void 
-glscale_mat4(glmat4 * m, glfloat s) {
-    m->vecs[0] *= s;
-    m->vecs[5] *= s;
-    m->vecs[10] *= s;
+glscale_mat4(glmat4 * m, glvec3 * s) {
+    m->vecs[0] *= s->x;
+    m->vecs[5] *= s->y;
+    m->vecs[10] *= s->z;
 }
 
 void

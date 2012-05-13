@@ -97,7 +97,7 @@ glmat4 * glalloc_mat4();
 void glfree_mat4(glmat4 *);
 void glset_identify_mat4(glmat4 *);
 glmat4 * glcreate_identify_mat4();
-void glscale_mat4(glmat4 *, glfloat s);
+void glscale_mat4(glmat4 *, glvec3 *);
 void glrotatez_mat4(glmat4 *, glangle);
 void glmove_mat4(glmat4 *, glvec3 *);
 void glmvtrans_mat4(glmat4 *, glfloat, glfloat);
