@@ -33,7 +33,7 @@ glfloat g_screen_width = 400.0f;
 glfloat g_screen_height = 400.0f;
 
 glconst_float g_center_colors[][9] = {
-                {1.0f, 1.0f, 204.0f/255.0f, 245.0f/255.0f, 209.0f/255.0f, 211.0f/255.0f, 1.0f, 1.0f, 204.0f/255.0f}
+                {1.0f, 1.0f, 204.0f/255.0f, 245.0f/255.0f, 169.0f/255.0f, 205.0f/255.0f, 1.0f, 1.0f, 204.0f/255.0f}
 };
 
 glfloat g_center_stop[][1] = {
@@ -87,14 +87,15 @@ static const glchar * center_fshader =
     "uniform vec2 radial_gradient_r;\n" \
     "uniform vec2 radial_gradient_center;\n" \
     "uniform float radial_gradient_stop;\n" \
-    "invariant varying vec2 ver_gradient_position;\n" \
+    "invariant varying vec2 ver_gradient_position;\n\n" \
     "void main()\n" \
     "{\n" \
-    "\tfloat gp = distance(ver_gradient_position, radial_gradient_center)/length(radial_gradient_r);\n" \
+    "\tvec2 dv = ver_gradient_position - radial_gradient_center;\n" \
+    "\tfloat gp = length(vec2(dv.x/radial_gradient_r.x, dv.y/radial_gradient_r.y));\n" \
     "\tif (gp >= radial_gradient_stop)\n" \
     "\t\tgl_FragColor = vec4(mix(radial_gradient_color[1], radial_gradient_color[0], gp), 1.0f);\n" \
     "\telse\n" \
-    "\t\tgl_FragColor = vec4(mix(radial_gradient_color[2], radial_gradient_color[1], gp), 0.6f);\n" \
+    "\t\tgl_FragColor = mix(vec4(radial_gradient_color[2], 0.00f), vec4(radial_gradient_color[1], 1.0f), gp);\n" \
     "}"
 };
 
@@ -106,6 +107,20 @@ glset_arc(glarc * parc, glvec3 * pp, glfloat r, unsigned int from, unsigned int 
     parc->r = r;
     parc->from = from;
     parc->to = to;
+}
+
+static void
+glset_circle(glcircle * pc, glvec3 * pv, glfloat r) {
+    glassign_vec3(&(pc->c), pv);
+    pc->r = r;
+}
+
+static void
+glset_petal(glpetal * pp, glfloat m, glfloat r1, glfloat r2, glfloat z) {
+    pp->m = m;
+    pp->r1 = r1;
+    pp->r2 = r2;
+    pp->z = z;
 }
 
 static void
@@ -138,7 +153,7 @@ push_center_obj(glvector * * pv, glcircle * pc) {
 
     glassign_vec3(&p, &(pc->c));
     glset_arc(&a, &(pc->c), pc->r, 0, 360);
-    push_arc(pv, &a, NULL);
+    push_arc(pv, &a);
 }
 
 static void
@@ -147,9 +162,10 @@ create_center_vbo() {
     glvec3 p = {0.0f, 0.0f, 0.0f};
     glcircle c = {{0}};
 
-	glset_center(&c, &p, 1.0f);
+	glset_circle(&c, &p, 1.0f);
     v = glalloc_vector(0);
     push_center_obj(&v, &c);
+//	glprint_vector(v);
     gfcontext.cbsize = glget_vector_size(v);
 
     glGenBuffers(1, &(gfcontext.cvbo));
@@ -166,7 +182,7 @@ push_petal_obj(glvector * * pv, glpetal * pp) {
     glarc a = {{0}};
 
     glset_vec3(&p, 0, 0, 0);
-    glpush_2vec3(pv, &p);
+    glpush_vec3(pv, &p);
 
     glset_vec3(&p, pp->r1, pp->m - pp->r1, pp->z);
     glset_arc(&a, &p, pp->r1, 180, 90);
@@ -181,11 +197,11 @@ push_petal_obj(glvector * * pv, glpetal * pp) {
     push_arc(pv, &a);
 
     glset_vec3(&p, 0, 0, 0);
-    glpush_2vec3(pv, &p);
+    glpush_vec3(pv, &p);
 }
 
-static glcolor cs = {185.0f/255.0f, 51.0f/255.0f, 76.0f/255.0f};
-static glcolor ce = {240.0f/255.0f, 166.0f/255.0f, 199.0f/255.0f};
+//static glcolor cs = {185.0f/255.0f, 51.0f/255.0f, 76.0f/255.0f};
+//static glcolor ce = {240.0f/255.0f, 166.0f/255.0f, 199.0f/255.0f};
 
 static void
 create_petal_vbo() {
@@ -193,7 +209,7 @@ create_petal_vbo() {
     glpetal petal = {0};
 
     v = glalloc_vector(0);
-    glset_petal(&petal, 1.0f,0.25f*1.0f, 0.50f*1.0f, 0.0f, &cs, &ce); 
+    glset_petal(&petal, 1.0f,0.25f*1.0f, 0.50f*1.0f, 0.0f); 
     push_petal_obj(&v, &petal);
 //	glprint_vector(v);
     gfcontext.pbsize = glget_vector_size(v);
@@ -234,23 +250,23 @@ glinit_flower_context() {
     create_center_vbo();
 
     glUseProgram(gfcontext.cprg.pid);
-    gfcontext.cvloc_ver = glGetAttribLocation(pid, "vertexs");
-    gfcontext.cvloc_mat_s = glGetUniformLocation(pid, "matrix_s");
-    gfcontext.cvloc_mat_m = glGetUniformLocation(pid, "matrix_m");
-    gfcontext.cfloc_rgs = glGetUniformLocation(pid, "radial_gradient_stop");
-    gfcontext.cfloc_rgr = glGetUniformLocation(pid, "radial_gradient_r");
-    gfcontext.cfloc_rgc = glGetUniformLocation(pid, "radial_gradient_color");
-    gfcontext.cfloc_rgp = glGetUniformLocation(pid, "radial_gradient_center");
+    gfcontext.cvloc_ver = glGetAttribLocation(gfcontext.cprg.pid, "vertexs");
+    gfcontext.cvloc_mat_s = glGetUniformLocation(gfcontext.cprg.pid, "matrix_s");
+    gfcontext.cvloc_mat_m = glGetUniformLocation(gfcontext.cprg.pid, "matrix_m");
+    gfcontext.cfloc_rgs = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_stop");
+    gfcontext.cfloc_rgr = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_r");
+    gfcontext.cfloc_rgc = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_color");
+    gfcontext.cfloc_rgp = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_center");
     glUseProgram(0);
 }
 
+/*
 static void 
 gldraw_petal(glflower * pf) {
     glmat4 * m_s;
     glmat4 * m_r;
     glmat4 * m_m;
     glvec3 v = {0};
-
 
     glGenVertexArrays(1, &(gfcontext.pvao));
     glBindVertexArray(gfcontext.pvao);
@@ -275,7 +291,7 @@ gldraw_petal(glflower * pf) {
         v.z = 0.0f;
         glmove_mat4(m_m, &v);
         glmove_mat4(m_m, &(pdst.circle.c));
-        glUniformMatrix4fv(pvloc_mat_m, 1, true,  glget_mat4_array(m_m));
+        glUniformMatrix4fv(gfcontext.pvloc_mat_m, 1, true,  glget_mat4_array(m_m));
 
         glrotatez_mat4(m_r, ang);
         glUniformMatrix4fv(pvloc_mat_r, 1, true,  glget_mat4_array(m_r));
@@ -295,31 +311,25 @@ gldraw_petal(glflower * pf) {
 	glDisableVertexAttribArray(pvloc_cor);
     glUseProgram(0);
 }
+*/
 
 static void
 gldraw_center(glflower_obj * pf) {
     glmat4 * m_s = glcreate_identify_mat4();
     glmat4 * m_m = glcreate_identify_mat4();
-    glvec3 v;
 
     glUseProgram(gfcontext.cprg.pid);
 
     glUniform1f(gfcontext.cfloc_rgs, g_center_stop[pf->cc][0]);
-    glUniform2f(gfcontext.cfloc_rgr, pf->cscalx, pf->cscaly);
+    glUniform2f(gfcontext.cfloc_rgr, pf->cs.x, pf->cs.y);
     glUniform3fv(gfcontext.cfloc_rgc, 3, (const GLfloat *)g_center_colors[pf->cc]);
-    glUniform2f(cfloc_rgp, pf->mx, pf->my);
+    glUniform2f(gfcontext.cfloc_rgp, pf->fm.x, pf->fm.y);
 
-    v.x = pf->cscalx;
-    v.y = pf->cscaly;
-    v.z = 1.0f;
-    glscale_mat4(m_s, &v);
-    glUniformMatrix4fv(cvloc_mat_s, 1, true,  glget_mat4_array(m_s));
+    glscale_mat4(m_s, &(pf->cs));
+    glUniformMatrix4fv(gfcontext.cvloc_mat_s, 1, true,  glget_mat4_array(m_s));
 
-    v.x = pf->mx;
-    v.y = pf->my;
-    v.z = 0.0f;
-    glmove_mat4(m_m, &v);
-    glUniformMatrix4fv(cvloc_mat_m, 1, true,  glget_mat4_array(m_m));
+    glmove_mat4(m_m, &(pf->fm));
+    glUniformMatrix4fv(gfcontext.cvloc_mat_m, 1, true,  glget_mat4_array(m_m));
 
     glGenVertexArrays(1, &(gfcontext.cvao));
     glBindVertexArray(gfcontext.cvao);
@@ -328,7 +338,7 @@ gldraw_center(glflower_obj * pf) {
     glVertexAttribPointer(gfcontext.cvloc_ver, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(gfcontext.cvloc_ver);
 
-    glDrawArrays(GL_TRIANGLE_FAN, 0, gfcontext.pbsize/3);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, gfcontext.cbsize/3);
 
     glDisableVertexAttribArray(gfcontext.cvloc_ver);
     glUseProgram(0);
@@ -339,16 +349,39 @@ gldraw_center(glflower_obj * pf) {
 }
 
 void
-set_flower_obj(glflower_obj * fo, glflower_size * fs) {
+set_flower_obj(glflower_obj * fo, glflower * fs) {
     glfloat sx = 2.0f/g_screen_width;
     glfloat sy = 2.0f/g_screen_height;
 
-    fo->pscalx = sx * fs->sp;
-    fo->pscaly = sy * fs->sp;
-    fo->cscalx = sx * fs->sc;
-    fo->cscaly = sy * fs->sc;
-    fo->lscalx = sx * fs->sl;
+    fo->ps.x = sx * fs->sp;
+    fo->ps.y = sy * fs->sp;
+    fo->ps.z = 1.0f;
 
-    fo->mx = 1.0f - fs->p.x * sx;
-    fo->my = fs->p.y * sy - 1.0f;
+    fo->cs.x = sx * fs->sc;
+    fo->cs.y = sy * fs->sc;
+    fo->cs.z = 1.0f;
+
+
+    fo->fm.x = 1.0f - fs->p.x * sx;
+    fo->fm.y = fs->p.y * sy - 1.0f;
+    fo->fm.z = 0.0f;
+}
+
+void
+glrender_flower_context() {
+    glflower f;
+    glflower_obj fo;
+
+    f.sp = 0.0f;
+    f.sl = 0.0f;
+    f.sc = 96.0f;
+    f.p.x = 250.0f;
+    f.p.y = 150.0f;
+    f.p.z = 0.0f;
+    f.cp = 0;
+    f.cc = 0;
+
+    set_flower_obj(&fo, &f);
+
+    gldraw_center(&fo);
 }

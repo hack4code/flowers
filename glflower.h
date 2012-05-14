@@ -22,7 +22,7 @@
 #include "glutil.h"
 
 typedef glvec3 glcolor;
-typedef unsigned int glcorlor_id;
+typedef unsigned int glcolor_id;
 
 typedef struct _glarc {
     glvec3 c;
@@ -44,19 +44,13 @@ typedef struct _glpetal {
 typedef struct _glcircle {
     glvec3 c;
     glfloat r;
-    glvec3 gradient_color[3];
 } glcircle;
 
 typedef struct _glflower_obj {
     glangle fa;
-    glfloat pscalx;
-    glfloat pscaly;
-    glfloat cscalx;
-    glfloat cscaly;
-    glfloat lscalx;
-    glfloat lscaly;
-    glfloat mx;
-    glfloat my;
+    glvec3 ps;
+    glvec3 cs;
+    glvec3 fm;
     glcolor_id cp;
     glcolor_id cc;
 } glflower_obj;
@@ -70,6 +64,7 @@ typedef struct _glflower_context {
     gllocation pvloc_cor;
     gllocation pvloc_mat_s;
     gllocation pvloc_mat_r;
+    gllocation pvloc_mat_m;
     
     glprograme cprg;
     glvbo  cvbo;
