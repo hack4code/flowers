@@ -76,7 +76,7 @@ static const glchar * center_vshader =
     "void main()\n" \
     "{\n" \
     "\tgl_Position = matrix_m * matrix_s * vec4(vertexs, 1.0f);\n" \
-    "\tver_gradient_position = (matrix_m * matrix_s * vec4(vertexs, 1.0f)).xy;\n" \
+    "\tver_gradient_position = vertexs.xy;\n" \
     "}"
 };
 
@@ -84,18 +84,15 @@ static const glchar * center_fshader =
 {
     "#version 120\n\n" \
     "uniform vec3 radial_gradient_color[3];\n" \
-    "uniform vec2 radial_gradient_r;\n" \
-    "uniform vec2 radial_gradient_center;\n" \
     "uniform float radial_gradient_stop;\n" \
     "invariant varying vec2 ver_gradient_position;\n\n" \
     "void main()\n" \
     "{\n" \
-    "\tvec2 dv = ver_gradient_position - radial_gradient_center;\n" \
-    "\tfloat gp = length(vec2(dv.x/radial_gradient_r.x, dv.y/radial_gradient_r.y));\n" \
+    "\tfloat gp = length(ver_gradient_position);\n" \
     "\tif (gp >= radial_gradient_stop)\n" \
-    "\t\tgl_FragColor = vec4(mix(radial_gradient_color[1], radial_gradient_color[0], gp), 1.0f);\n" \
+    "\t\tgl_FragColor = mix(vec4(radial_gradient_color[1], 1.0f), vec4(radial_gradient_color[0], 1.0f), gp);\n" \
     "\telse\n" \
-    "\t\tgl_FragColor = mix(vec4(radial_gradient_color[2], 0.00f), vec4(radial_gradient_color[1], 1.0f), gp);\n" \
+    "\t\tgl_FragColor = mix(vec4(radial_gradient_color[2], 1.0f), vec4(radial_gradient_color[1], 1.0f), gp);\n" \
     "}"
 };
 
@@ -254,9 +251,7 @@ glinit_flower_context() {
     gfcontext.cvloc_mat_s = glGetUniformLocation(gfcontext.cprg.pid, "matrix_s");
     gfcontext.cvloc_mat_m = glGetUniformLocation(gfcontext.cprg.pid, "matrix_m");
     gfcontext.cfloc_rgs = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_stop");
-    gfcontext.cfloc_rgr = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_r");
     gfcontext.cfloc_rgc = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_color");
-    gfcontext.cfloc_rgp = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_center");
     glUseProgram(0);
 }
 
@@ -321,9 +316,7 @@ gldraw_center(glflower_obj * pf) {
     glUseProgram(gfcontext.cprg.pid);
 
     glUniform1f(gfcontext.cfloc_rgs, g_center_stop[pf->cc][0]);
-    glUniform2f(gfcontext.cfloc_rgr, pf->cs.x, pf->cs.y);
     glUniform3fv(gfcontext.cfloc_rgc, 3, (const GLfloat *)g_center_colors[pf->cc]);
-    glUniform2f(gfcontext.cfloc_rgp, pf->fm.x, pf->fm.y);
 
     glscale_mat4(m_s, &(pf->cs));
     glUniformMatrix4fv(gfcontext.cvloc_mat_s, 1, true,  glget_mat4_array(m_s));
