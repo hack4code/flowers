@@ -38,7 +38,7 @@ typedef struct _glpetal {
     glfloat r2;
     glfloat z;
     glfloat l;
-    glvec3 gradient_color[2];
+//    glvec3 gradient_color[2];
 } glpetal;
 
 typedef struct _glcircle {
@@ -51,8 +51,8 @@ typedef struct _glflower_obj {
     glvec3 ps;
     glvec3 cs;
     glvec3 fm;
-    glcolor_id cp;
-    glcolor_id cc;
+    glvec3 lm;
+    glcolor_id cf;
 } glflower_obj;
 
 typedef struct _glflower_context {
@@ -61,10 +61,10 @@ typedef struct _glflower_context {
     glvao  pvao;
     size_t pbsize;
     gllocation pvloc_ver;
-    gllocation pvloc_cor;
     gllocation pvloc_mat_s;
     gllocation pvloc_mat_r;
     gllocation pvloc_mat_m;
+    gllocation pfloc_cor;
     
     glprograme cprg;
     glvbo  cvbo;
@@ -84,8 +84,8 @@ typedef struct _glflower {
     glfloat sl;
     glfloat sc;
     glvec3 p;
-    glcolor_id cp;
-    glcolor_id cc;
+    glangle a;
+    glcolor_id cf;
 } glflower;
 
 void glinit_flower_context();

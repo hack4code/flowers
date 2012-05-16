@@ -32,7 +32,8 @@ extern const double PI;
 glfloat g_screen_width = 400.0f;
 glfloat g_screen_height = 400.0f;
 
-glconst_float g_center_colors[][9] = {
+//colors for center
+static glconst_float g_center_colors[][9] = {
                 {1.0f, 1.0f, 204.0f/255.0f, 245.0f/255.0f, 169.0f/255.0f, 205.0f/255.0f, 1.0f, 1.0f, 204.0f/255.0f}
 };
 
@@ -40,29 +41,37 @@ glfloat g_center_stop[][1] = {
                                 {0.30f}
 };
 
+
+//colors for petal
+glconst_float g_petal_colors[][6] = {
+    {185.0f/255.0f, 51.0f/255.0f, 76.0f/255.0f, 240.0f/255.0f, 166.0f/255.0f, 199.0f/255.0f}
+};
+
 static const glchar * petal_vshader = 
 {
     "#version 120\n\n" \
     "attribute vec3 vertexs;\n" \
-    "attribute vec3 colors;\n" \
     "uniform mat4 matrix_s;\n" \
     "uniform mat4 matrix_m;\n" \
     "uniform mat4 matrix_r;\n" \
-    "invariant varying vec4 vcolor;\n\n" \
+    "invariant varying vec2 vertex_pos;\n\n" \
     "void main()\n" \
     "{\n" \
     "\tgl_Position =  matrix_m * matrix_r * matrix_s * vec4(vertexs, 1.0);\n" \
-    "\tvcolor = vec4(colors, 1.0f);\n" \
+    "\tvertex_pos = vertexs.xy;\n" \
     "}"
 };
 
 static const glchar * petal_fshader =
 {
     "#version 120\n\n" \
-    "invariant varying vec4 vcolor;\n\n" \
+    "uniform vec3 liner_gradient_colors[2];\n" \
+    "invariant varying vec2 vertex_pos;\n\n" \
     "void main()\n" \
     "{\n" \
-    "\tgl_FragColor = vcolor;\n" \
+    "\tfloat gp;\n" \
+    "\tgp = length(vertex_pos) * cos(atan(vertex_pos.y, vertex_pos.x) - 3.1415926f/4.0f) / sqrt(2.0f);\n" \
+    "\tgl_FragColor = mix(vec4(liner_gradient_colors[0], 1.0f), vec4(liner_gradient_colors[1], 1.0f), gp);\n" \
     "}"
 };
 
@@ -197,8 +206,6 @@ push_petal_obj(glvector * * pv, glpetal * pp) {
     glpush_vec3(pv, &p);
 }
 
-//static glcolor cs = {185.0f/255.0f, 51.0f/255.0f, 76.0f/255.0f};
-//static glcolor ce = {240.0f/255.0f, 166.0f/255.0f, 199.0f/255.0f};
 
 static void
 create_petal_vbo() {
@@ -233,10 +240,10 @@ glinit_flower_context() {
 
     glUseProgram(gfcontext.pprg.pid);
     gfcontext.pvloc_ver = glGetAttribLocation(gfcontext.pprg.pid, "vertexs");
-    gfcontext.pvloc_cor = glGetAttribLocation(gfcontext.pprg.pid, "colors");
     gfcontext.pvloc_mat_s = glGetUniformLocation(gfcontext.pprg.pid, "matrix_s");
     gfcontext.pvloc_mat_r = glGetUniformLocation(gfcontext.pprg.pid, "matrix_r");
     gfcontext.pvloc_mat_m = glGetUniformLocation(gfcontext.pprg.pid, "matrix_m");
+    gfcontext.pfloc_cor = glGetAttribLocation(gfcontext.pprg.pid, "liner_gradient_colors");
     glUseProgram(0);
 
     status = glcreate_programe(&(gfcontext.cprg), center_vshader, center_fshader);
@@ -255,43 +262,53 @@ glinit_flower_context() {
     glUseProgram(0);
 }
 
-/*
 static void 
-gldraw_petal(glflower * pf) {
+gldraw_petal(glflower_obj * pf) {
     glmat4 * m_s;
     glmat4 * m_r;
     glmat4 * m_m;
     glvec3 v = {0};
+    glangle ang;
+
+    glUseProgram(gfcontext.pprg.pid);
 
     glGenVertexArrays(1, &(gfcontext.pvao));
     glBindVertexArray(gfcontext.pvao);
 
     glBindBuffer(GL_ARRAY_BUFFER, gfcontext.pvbo);
-    glVertexAttribPointer(pvloc_ver, 3, GL_FLOAT, GL_FALSE, 6*sizeof(glfloat), 0);
-    glVertexAttribPointer(pvloc_cor, 3, GL_FLOAT, GL_FALSE, 6*sizeof(glfloat), (const void *)(3*sizeof(glfloat)));
-    glEnableVertexAttribArray(pvloc_ver);
-    glEnableVertexAttribArray(pvloc_cor);
+    glVertexAttribPointer(gfcontext.pvloc_ver, 3, GL_FLOAT, GL_FALSE, 3*sizeof(glfloat), 0);
+    glEnableVertexAttribArray(gfcontext.pvloc_ver);
 
-    gltransform_flower(&pdst, pf);
-    for (ang = 10; ang < 360; ang += 90) {
+    for (ang = pf->fa; ang < 360; ang += 90) {
         m_s = glcreate_identify_mat4();
         m_r = glcreate_identify_mat4();
         m_m = glcreate_identify_mat4();
 
-        glscale_mat4(m_s, pdst.petal.m);
-        glUniformMatrix4fv(pvloc_mat_s, 1, true,  glget_mat4_array(m_s));
+        glscale_mat4(m_s, &(pf->ps));
+        glUniformMatrix4fv(gfcontext.pvloc_mat_s, 1, true,  glget_mat4_array(m_s));
 
-        v.x = pdst.petal.l * (glfloat)cos(glang_transform(ang + 45));
-        v.y = pdst.petal.l * (glfloat)sin(glang_transform(ang + 45));
+        if ((270 <= ang && ang < 360) || (0 <= ang && ang < 90))
+            v.x = pf->lm.x;
+        else
+            v.x = -pf->lm.x;
+
+        if (0 <= ang && 180 > ang)
+            v.y = pf->lm.y;
+        else
+            v.y = -pf->lm.y;
+
         v.z = 0.0f;
+
         glmove_mat4(m_m, &v);
-        glmove_mat4(m_m, &(pdst.circle.c));
+        glmove_mat4(m_m, &(pf->fm));
         glUniformMatrix4fv(gfcontext.pvloc_mat_m, 1, true,  glget_mat4_array(m_m));
 
         glrotatez_mat4(m_r, ang);
-        glUniformMatrix4fv(pvloc_mat_r, 1, true,  glget_mat4_array(m_r));
+        glUniformMatrix4fv(gfcontext.pvloc_mat_r, 1, true,  glget_mat4_array(m_r));
 
-        glDrawArrays(GL_TRIANGLE_FAN, 0, gfcontext.pbsize/6);
+        glUniform3fv(gfcontext.pfloc_cor, 2, (const GLfloat *)g_petal_colors[pf->cf]);
+
+        glDrawArrays(GL_TRIANGLE_FAN, 0, gfcontext.pbsize/3);
 
         glfree_mat4(m_s);
         glfree_mat4(m_r);
@@ -302,11 +319,9 @@ gldraw_petal(glflower * pf) {
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glDisableVertexAttribArray(pvloc_ver);
-	glDisableVertexAttribArray(pvloc_cor);
+    glDisableVertexAttribArray(gfcontext.pvloc_ver);
     glUseProgram(0);
 }
-*/
 
 static void
 gldraw_center(glflower_obj * pf) {
@@ -315,8 +330,8 @@ gldraw_center(glflower_obj * pf) {
 
     glUseProgram(gfcontext.cprg.pid);
 
-    glUniform1f(gfcontext.cfloc_rgs, g_center_stop[pf->cc][0]);
-    glUniform3fv(gfcontext.cfloc_rgc, 3, (const GLfloat *)g_center_colors[pf->cc]);
+    glUniform1f(gfcontext.cfloc_rgs, g_center_stop[pf->cf][0]);
+    glUniform3fv(gfcontext.cfloc_rgc, 3, (const GLfloat *)g_center_colors[pf->cf]);
 
     glscale_mat4(m_s, &(pf->cs));
     glUniformMatrix4fv(gfcontext.cvloc_mat_s, 1, true,  glget_mat4_array(m_s));
@@ -354,10 +369,16 @@ set_flower_obj(glflower_obj * fo, glflower * fs) {
     fo->cs.y = sy * fs->sc;
     fo->cs.z = 1.0f;
 
-
     fo->fm.x = 1.0f - fs->p.x * sx;
     fo->fm.y = fs->p.y * sy - 1.0f;
     fo->fm.z = 0.0f;
+
+    fo->lm.x = sx * fs->sl;
+    fo->lm.y = sy * fs->sl;
+    fo->lm.z = 0.0f;
+
+    fo->fa = fs->a;
+    fo->cf = fs->cf;
 }
 
 void
@@ -365,16 +386,18 @@ glrender_flower_context() {
     glflower f;
     glflower_obj fo;
 
-    f.sp = 0.0f;
-    f.sl = 0.0f;
-    f.sc = 96.0f;
+    f.sp = 15.0f;
+    f.sl = 1.0f;
+    f.sc = 8.0f;
     f.p.x = 250.0f;
     f.p.y = 150.0f;
     f.p.z = 0.0f;
-    f.cp = 0;
-    f.cc = 0;
+    f.cf = 0;
+    f.a = 0;
 
     set_flower_obj(&fo, &f);
 
+
     gldraw_center(&fo);
+    gldraw_petal(&fo);
 }
