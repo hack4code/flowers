@@ -136,18 +136,18 @@ push_arc(glvector ** pv, glarc * pa) {
 	unsigned int to = pa->to;
 
     int step = (to < from) ? -STEP : STEP;
-    int ang;
+    int ang = from;
 
-    for (ang = from; ang != to; ang += step) {
+    while (true) {
         pt.x = (glfloat) (pa->c.x + pa->r * cos(PI*ang/180.0));
         pt.y = (glfloat) (pa->c.y + pa->r * sin(PI*ang/180.0));
         pt.z = (glfloat) pa->c.z;
         glpush_vec3(pv, &pt);
+        if (ang == to)
+            break;
+        else
+            ang += step;
     }
-    pt.x = (glfloat) (pa->c.x + pa->r * cos(PI*ang/180.0));
-    pt.y = (glfloat) (pa->c.y + pa->r * sin(PI*ang/180.0));
-    pt.z = (glfloat) pa->c.z;
-    glpush_vec3(pv, &pt);
 }
 
 static void
@@ -215,7 +215,7 @@ create_petal_vbo() {
     v = glalloc_vector(0);
     glset_petal(&petal, 1.0f,0.25f*1.0f, 0.50f*1.0f, 0.0f); 
     push_petal_obj(&v, &petal);
-//	glprint_vector(v);
+	glprint_vector(v);
     gfcontext.pbsize = glget_vector_size(v);
 
     glGenBuffers(1, &(gfcontext.pvbo));
@@ -243,7 +243,7 @@ glinit_flower_context() {
     gfcontext.pvloc_mat_s = glGetUniformLocation(gfcontext.pprg.pid, "matrix_s");
     gfcontext.pvloc_mat_r = glGetUniformLocation(gfcontext.pprg.pid, "matrix_r");
     gfcontext.pvloc_mat_m = glGetUniformLocation(gfcontext.pprg.pid, "matrix_m");
-    gfcontext.pfloc_cor = glGetAttribLocation(gfcontext.pprg.pid, "liner_gradient_colors");
+    gfcontext.pfloc_cor = glGetUniformLocation(gfcontext.pprg.pid, "liner_gradient_colors");
     glUseProgram(0);
 
     status = glcreate_programe(&(gfcontext.cprg), center_vshader, center_fshader);
@@ -397,7 +397,6 @@ glrender_flower_context() {
 
     set_flower_obj(&fo, &f);
 
-
-    gldraw_center(&fo);
-    gldraw_petal(&fo);
+	gldraw_petal(&fo);
+    gldraw_center(&fo);   
 }
