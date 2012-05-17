@@ -30,21 +30,25 @@
 extern const double PI;
 
 glfloat g_screen_width = 400.0f;
-glfloat g_screen_height = 400.0f;
+glfloat g_screen_height = 300.0f;
 
 //colors for center
 static glconst_float g_center_colors[][9] = {
                 {1.0f, 1.0f, 204.0f/255.0f, 245.0f/255.0f, 169.0f/255.0f, 205.0f/255.0f, 1.0f, 1.0f, 204.0f/255.0f}
 };
 
-glfloat g_center_stop[][1] = {
-                                {0.30f}
+glfloat g_center_stop[][3] = {
+                {0.0f, 0.30f, 0.80f}
 };
 
 
 //colors for petal
 glconst_float g_petal_colors[][6] = {
     {185.0f/255.0f, 51.0f/255.0f, 76.0f/255.0f, 240.0f/255.0f, 166.0f/255.0f, 199.0f/255.0f}
+};
+
+glfloat g_petal_stop[][2] = {
+                {0.40f, 0.90f}
 };
 
 static const glchar * petal_vshader = 
@@ -88,9 +92,9 @@ static const glchar * center_vshader =
 {
     "#version 120\n\n" \
     "attribute vec3 vertexs;\n" \
-    "invariant varying vec2 ver_gradient_position;\n" \
     "uniform mat4 matrix_s;\n\n" \
     "uniform mat4 matrix_m;\n\n" \
+    "invariant varying vec2 ver_gradient_position;\n" \
     "void main()\n" \
     "{\n" \
     "\tgl_Position = matrix_m * matrix_s * vec4(vertexs, 1.0f);\n" \
@@ -102,15 +106,20 @@ static const glchar * center_fshader =
 {
     "#version 120\n\n" \
     "uniform vec3 radial_gradient_color[3];\n" \
-    "uniform float radial_gradient_stop;\n" \
+    "uniform float radial_gradient_stop[3];\n" \
     "invariant varying vec2 ver_gradient_position;\n\n" \
     "void main()\n" \
     "{\n" \
-    "\tfloat gp = length(ver_gradient_position);\n" \
-    "\tif (gp >= radial_gradient_stop)\n" \
-    "\t\tgl_FragColor = mix(vec4(radial_gradient_color[1], 1.0f), vec4(radial_gradient_color[0], 1.0f), gp);\n" \
+    "\tfloat gp;\n" \
+    "\tgp = length(ver_gradient_position)/0.50f;\n" \
+    "\tif (gp <= radial_gradient_stop[0])\n" \
+    "\t\tgl_FragColor = vec4(radial_gradient_color[0], 1.0f);\n" \
+    "\telse if ((gp > radial_gradient_stop[0]) && (gp < radial_gradient_stop[1]))\n" \
+    "\t\tgl_FragColor = mix(vec4(radial_gradient_color[0], 1.0f), vec4(radial_gradient_color[1], 1.0f), (gp - radial_gradient_stop[0])/(radial_gradient_stop[1] - radial_gradient_stop[0]));\n" \
+    "\telse if ((gp >= radial_gradient_stop[1]) && (gp < radial_gradient_stop[2]))\n" \
+    "\t\tgl_FragColor = mix(vec4(radial_gradient_color[1], 1.0f), vec4(radial_gradient_color[2], 1.0f), (gp - radial_gradient_stop[1])/(radial_gradient_stop[2]-radial_gradient_stop[1]));\n" \
     "\telse\n" \
-    "\t\tgl_FragColor = mix(vec4(radial_gradient_color[2], 1.0f), vec4(radial_gradient_color[1], 1.0f), gp);\n" \
+    "\t\tgl_FragColor = vec4(radial_gradient_color[2], 1.0f);\n" \
     "}"
 };
 
@@ -178,7 +187,7 @@ create_center_vbo() {
     glvec3 p = {0.0f, 0.0f, 0.0f};
     glcircle c = {{0}};
 
-	glset_circle(&c, &p, 1.0f);
+	glset_circle(&c, &p, 0.5f);
     v = glalloc_vector(0);
     push_center_obj(&v, &c);
 //	glprint_vector(v);
@@ -264,12 +273,14 @@ glinit_flower_context() {
     }
     create_center_vbo();
 
+    fprintf(stdout, "%s\n", center_fshader);
+
     glUseProgram(gfcontext.cprg.pid);
     gfcontext.cvloc_ver = glGetAttribLocation(gfcontext.cprg.pid, "vertexs");
     gfcontext.cvloc_mat_s = glGetUniformLocation(gfcontext.cprg.pid, "matrix_s");
     gfcontext.cvloc_mat_m = glGetUniformLocation(gfcontext.cprg.pid, "matrix_m");
-    gfcontext.cfloc_rgs = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_stop");
     gfcontext.cfloc_rgc = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_color");
+    gfcontext.cfloc_rgs = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_stop");
     glUseProgram(0);
 }
 
@@ -279,7 +290,7 @@ gldraw_petal(glflower_obj * pf) {
     glmat4 * m_r;
     glmat4 * m_mf;
     glmat4 * m_mp;
-    glangle ang;
+    glangle ang = pf->fa;
 
     glUseProgram(gfcontext.pprg.pid);
 
@@ -290,7 +301,7 @@ gldraw_petal(glflower_obj * pf) {
     glVertexAttribPointer(gfcontext.pvloc_ver, 3, GL_FLOAT, GL_FALSE, 3*sizeof(glfloat), 0);
     glEnableVertexAttribArray(gfcontext.pvloc_ver);
 
-    for (ang = pf->fa; ang < 360; ang += 90) {
+    for (; ang < 360; ang += 90) {
         m_s = glcreate_identify_mat4();
         m_r = glcreate_identify_mat4();
         m_mf = glcreate_identify_mat4();
@@ -334,14 +345,14 @@ gldraw_center(glflower_obj * pf) {
 
     glUseProgram(gfcontext.cprg.pid);
 
-    glUniform1f(gfcontext.cfloc_rgs, g_center_stop[pf->cf][0]);
-    glUniform3fv(gfcontext.cfloc_rgc, 3, (const GLfloat *)g_center_colors[pf->cf]);
-
     glscale_mat4(m_s, &(pf->cs));
     glUniformMatrix4fv(gfcontext.cvloc_mat_s, 1, true,  glget_mat4_array(m_s));
 
     glmove_mat4(m_m, &(pf->fm));
     glUniformMatrix4fv(gfcontext.cvloc_mat_m, 1, true,  glget_mat4_array(m_m));
+
+    glUniform3fv(gfcontext.cfloc_rgc, 3, (const glfloat *)g_center_colors[pf->cf]);
+    glUniform1fv(gfcontext.cfloc_rgs, 3, (const glfloat *)g_center_stop[pf->cf]);
 
     glGenVertexArrays(1, &(gfcontext.cvao));
     glBindVertexArray(gfcontext.cvao);
@@ -390,9 +401,9 @@ glrender_flower_context() {
     glflower f;
     glflower_obj fo;
 
-    f.sp = 25.0f;
+    f.sp = 20.0f;
     f.sl = 0.6f;
-    f.sc = 8.0f;
+    f.sc = 10.0f;
     f.p.x = 50.0f;
     f.p.y = 50.0f;
     f.p.z = 0.0f;

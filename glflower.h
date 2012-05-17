@@ -76,8 +76,6 @@ typedef struct _glflower_context {
     gllocation cvloc_mat_m;
     gllocation cfloc_rgs;
     gllocation cfloc_rgc;
-    gllocation cfloc_rgp;
-    gllocation cfloc_rgr;
 } glflower_context;
 
 typedef struct _glflower {
