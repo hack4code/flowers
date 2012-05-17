@@ -44,8 +44,7 @@ int main( void ) {
     while(running) {
         glEnable(GL_POLYGON_SMOOTH);
         glClear(GL_COLOR_BUFFER_BIT);
-//        glClearColor(1.0, 1.0, 1.0, 0.0);
-        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClearColor(1.0, 1.0, 1.0, 0.0);
         glrender_flower_context();
         glfwSwapBuffers();
         running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );

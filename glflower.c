@@ -52,12 +52,13 @@ static const glchar * petal_vshader =
     "#version 120\n\n" \
     "attribute vec3 vertexs;\n" \
     "uniform mat4 matrix_s;\n" \
-    "uniform mat4 matrix_m;\n" \
+    "uniform mat4 matrix_mf;\n" \
+    "uniform mat4 matrix_mp;\n" \
     "uniform mat4 matrix_r;\n" \
     "invariant varying vec2 vertex_pos;\n\n" \
     "void main()\n" \
     "{\n" \
-    "\tgl_Position =  matrix_m * matrix_r * matrix_s * vec4(vertexs, 1.0);\n" \
+    "\tgl_Position =  matrix_mf * matrix_r * matrix_mp * matrix_s * vec4(vertexs, 1.0);\n" \
     "\tvertex_pos = vertexs.xy;\n" \
     "}"
 };
@@ -224,7 +225,7 @@ create_petal_vbo() {
     v = glalloc_vector(0);
     glset_petal(&petal, 1.0f,0.25f*1.0f, 0.50f*1.0f, 0.0f); 
     push_petal_obj(&v, &petal);
-	glprint_vector(v);
+//	glprint_vector(v);
     gfcontext.pbsize = glget_vector_size(v);
 
     glGenBuffers(1, &(gfcontext.pvbo));
@@ -251,7 +252,8 @@ glinit_flower_context() {
     gfcontext.pvloc_ver = glGetAttribLocation(gfcontext.pprg.pid, "vertexs");
     gfcontext.pvloc_mat_s = glGetUniformLocation(gfcontext.pprg.pid, "matrix_s");
     gfcontext.pvloc_mat_r = glGetUniformLocation(gfcontext.pprg.pid, "matrix_r");
-    gfcontext.pvloc_mat_m = glGetUniformLocation(gfcontext.pprg.pid, "matrix_m");
+    gfcontext.pvloc_mat_mf = glGetUniformLocation(gfcontext.pprg.pid, "matrix_mf");
+    gfcontext.pvloc_mat_mp = glGetUniformLocation(gfcontext.pprg.pid, "matrix_mp");
     gfcontext.pfloc_cor = glGetUniformLocation(gfcontext.pprg.pid, "liner_gradient_colors");
     glUseProgram(0);
 
@@ -275,8 +277,8 @@ static void
 gldraw_petal(glflower_obj * pf) {
     glmat4 * m_s;
     glmat4 * m_r;
-    glmat4 * m_m;
-    glvec3 v = {0};
+    glmat4 * m_mf;
+    glmat4 * m_mp;
     glangle ang;
 
     glUseProgram(gfcontext.pprg.pid);
@@ -291,29 +293,20 @@ gldraw_petal(glflower_obj * pf) {
     for (ang = pf->fa; ang < 360; ang += 90) {
         m_s = glcreate_identify_mat4();
         m_r = glcreate_identify_mat4();
-        m_m = glcreate_identify_mat4();
+        m_mf = glcreate_identify_mat4();
+        m_mp = glcreate_identify_mat4();
 
         glscale_mat4(m_s, &(pf->ps));
         glUniformMatrix4fv(gfcontext.pvloc_mat_s, 1, true,  glget_mat4_array(m_s));
 
-        if ((270 <= ang && ang < 360) || (0 <= ang && ang < 90))
-            v.x = pf->lm.x;
-        else
-            v.x = -pf->lm.x;
-
-        if (0 <= ang && 180 > ang)
-            v.y = pf->lm.y;
-        else
-            v.y = -pf->lm.y;
-
-        v.z = 0.0f;
-
-        glmove_mat4(m_m, &v);
-        glmove_mat4(m_m, &(pf->fm));
-        glUniformMatrix4fv(gfcontext.pvloc_mat_m, 1, true,  glget_mat4_array(m_m));
+        glmove_mat4(m_mp, &(pf->pm));
+        glUniformMatrix4fv(gfcontext.pvloc_mat_mp, 1, true,  glget_mat4_array(m_mp));
 
         glrotatez_mat4(m_r, ang);
         glUniformMatrix4fv(gfcontext.pvloc_mat_r, 1, true,  glget_mat4_array(m_r));
+
+        glmove_mat4(m_mf, &(pf->fm));
+        glUniformMatrix4fv(gfcontext.pvloc_mat_mf, 1, true,  glget_mat4_array(m_mf));
 
         glUniform3fv(gfcontext.pfloc_cor, 2, (const GLfloat *)g_petal_colors[pf->cf]);
 
@@ -321,10 +314,12 @@ gldraw_petal(glflower_obj * pf) {
 
         glfree_mat4(m_s);
         glfree_mat4(m_r);
-        glfree_mat4(m_m);
+        glfree_mat4(m_mf);
+        glfree_mat4(m_mp);
         m_s = NULL;
         m_r = NULL;
-        m_m = NULL;
+        m_mf = NULL;
+        m_mp = NULL;
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -379,12 +374,12 @@ set_flower_obj(glflower_obj * fo, glflower * fs) {
     fo->cs.z = 1.0f;
 
     fo->fm.x = 1.0f - fs->p.x * sx;
-    fo->fm.y = fs->p.y * sy - 1.0f;
+    fo->fm.y = 1.0f - fs->p.y * sy;
     fo->fm.z = 0.0f;
 
-    fo->lm.x = sx * fs->sl;
-    fo->lm.y = sy * fs->sl;
-    fo->lm.z = 0.0f;
+    fo->pm.x = sx * fs->sl;
+    fo->pm.y = sx * fs->sl;
+    fo->pm.z = 0.0f;
 
     fo->fa = fs->a;
     fo->cf = fs->cf;
@@ -395,14 +390,14 @@ glrender_flower_context() {
     glflower f;
     glflower_obj fo;
 
-    f.sp = 45.0f;
-    f.sl = 1.0f;
+    f.sp = 25.0f;
+    f.sl = 0.6f;
     f.sc = 8.0f;
-    f.p.x = 250.0f;
-    f.p.y = 150.0f;
+    f.p.x = 50.0f;
+    f.p.y = 50.0f;
     f.p.z = 0.0f;
     f.cf = 0;
-    f.a = 0;
+    f.a = 20;
 
     set_flower_obj(&fo, &f);
 

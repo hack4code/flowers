@@ -51,7 +51,7 @@ typedef struct _glflower_obj {
     glvec3 ps;
     glvec3 cs;
     glvec3 fm;
-    glvec3 lm;
+    glvec3 pm;
     glcolor_id cf;
 } glflower_obj;
 
@@ -63,7 +63,8 @@ typedef struct _glflower_context {
     gllocation pvloc_ver;
     gllocation pvloc_mat_s;
     gllocation pvloc_mat_r;
-    gllocation pvloc_mat_m;
+    gllocation pvloc_mat_mf;
+    gllocation pvloc_mat_mp;
     gllocation pfloc_cor;
     
     glprograme cprg;
