@@ -25,7 +25,7 @@
 #pragma comment(lib, "glew32.lib")
 #endif //_WIN32
 
-#define STEP 10
+#define STEP 30
 
 extern const double PI;
 
@@ -66,12 +66,20 @@ static const glchar * petal_fshader =
 {
     "#version 120\n\n" \
     "uniform vec3 liner_gradient_colors[2];\n" \
+    "float sp[2];\n" \
     "invariant varying vec2 vertex_pos;\n\n" \
     "void main()\n" \
     "{\n" \
+    "\tsp[0] = 0.40f;\n" \
+    "\tsp[1] = 0.90f;\n" \
     "\tfloat gp;\n" \
-    "\tgp = length(vertex_pos) * cos(atan(vertex_pos.y, vertex_pos.x) - 3.1415926f/4.0f) / sqrt(2.0f);\n" \
-    "\tgl_FragColor = mix(vec4(liner_gradient_colors[0], 1.0f), vec4(liner_gradient_colors[1], 1.0f), gp);\n" \
+    "\tgp = 1.0f - length(vertex_pos) * cos(atan(vertex_pos.y, vertex_pos.x) - 3.1415926f/4.0f)/sqrt(2.0f);\n" \
+    "\tif (gp < sp[0])\n" \
+    "\t\tgl_FragColor = vec4(liner_gradient_colors[1], 1.0f);\n" \
+    "\telse if (sp[0] <= gp && sp[1] > gp)\n" \
+    "\t\tgl_FragColor = mix(vec4(liner_gradient_colors[1], 1.0f), vec4(liner_gradient_colors[0], 1.0f), (gp - sp[0])/(sp[1] - sp[0]));\n" \
+    "\telse\n" \
+    "\t\tgl_FragColor = vec4(liner_gradient_colors[0], 1.0f);\n" \
     "}"
 };
 
@@ -143,6 +151,7 @@ push_arc(glvector ** pv, glarc * pa) {
         pt.y = (glfloat) (pa->c.y + pa->r * sin(PI*ang/180.0));
         pt.z = (glfloat) pa->c.z;
         glpush_vec3(pv, &pt);
+
         if (ang == to)
             break;
         else
@@ -386,7 +395,7 @@ glrender_flower_context() {
     glflower f;
     glflower_obj fo;
 
-    f.sp = 15.0f;
+    f.sp = 45.0f;
     f.sl = 1.0f;
     f.sc = 8.0f;
     f.p.x = 250.0f;
