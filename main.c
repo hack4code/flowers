@@ -75,7 +75,7 @@ main(int argc, char** argv)
     //char * sversion;
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
-    glutInitWindowSize(300, 300);
+    glutInitWindowSize(400, 300);
     glutCreateWindow("flower");
 //    glutIdleFunc(&update);
     glutDisplayFunc(&render);

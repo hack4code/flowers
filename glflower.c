@@ -62,7 +62,7 @@ static const glchar * petal_vshader =
     "invariant varying vec2 vertex_pos;\n\n" \
     "void main()\n" \
     "{\n" \
-    "\tgl_Position =  matrix_mf * matrix_r * matrix_mp * matrix_s * vec4(vertexs, 1.0);\n" \
+    "\tgl_Position =  matrix_mf * matrix_s * matrix_r * matrix_mp * vec4(vertexs, 1.0);\n" \
     "\tvertex_pos = vertexs.xy;\n" \
     "}"
 };
@@ -388,8 +388,8 @@ set_flower_obj(glflower_obj * fo, glflower * fs) {
     fo->fm.y = 1.0f - fs->p.y * sy;
     fo->fm.z = 0.0f;
 
-    fo->pm.x = sx * fs->sl;
-    fo->pm.y = sx * fs->sl;
+    fo->pm.x = fs->sl/fs->sp;
+    fo->pm.y = fs->sl/fs->sp;
     fo->pm.z = 0.0f;
 
     fo->fa = fs->a;
@@ -402,13 +402,13 @@ glrender_flower_context() {
     glflower_obj fo;
 
     f.sp = 20.0f;
-    f.sl = 0.6f;
+    f.sl = 0.5f;
     f.sc = 10.0f;
     f.p.x = 50.0f;
     f.p.y = 50.0f;
     f.p.z = 0.0f;
     f.cf = 0;
-    f.a = 20;
+    f.a = 30;
 
     set_flower_obj(&fo, &f);
 
