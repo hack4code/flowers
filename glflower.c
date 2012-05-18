@@ -47,7 +47,7 @@ glconst_float g_petal_colors[][6] = {
     {185.0f/255.0f, 51.0f/255.0f, 76.0f/255.0f, 240.0f/255.0f, 166.0f/255.0f, 199.0f/255.0f}
 };
 
-glfloat g_petal_stop[][2] = {
+glfloat g_petal_stop[][3] = {
                 {0.40f, 0.90f}
 };
 
@@ -70,19 +70,17 @@ static const glchar * petal_vshader =
 static const glchar * petal_fshader =
 {
     "#version 120\n\n" \
-    "uniform vec3 liner_gradient_colors[2];\n" \
-    "float sp[2];\n" \
+    "uniform vec3 liner_gradient_colors[3];\n" \
+    "uniform float liner_gradient_stop[3];\n" \
     "invariant varying vec2 vertex_pos;\n\n" \
     "void main()\n" \
     "{\n" \
-    "\tsp[0] = 0.40f;\n" \
-    "\tsp[1] = 0.90f;\n" \
     "\tfloat gp;\n" \
     "\tgp = 1.0f - length(vertex_pos) * cos(atan(vertex_pos.y, vertex_pos.x) - 3.1415926f/4.0f)/sqrt(2.0f);\n" \
-    "\tif (gp < sp[0])\n" \
+    "\tif (gp <= liner_gradient_stop[0])\n" \
     "\t\tgl_FragColor = vec4(liner_gradient_colors[1], 1.0f);\n" \
-    "\telse if (sp[0] <= gp && sp[1] > gp)\n" \
-    "\t\tgl_FragColor = mix(vec4(liner_gradient_colors[1], 1.0f), vec4(liner_gradient_colors[0], 1.0f), (gp - sp[0])/(sp[1] - sp[0]));\n" \
+    "\telse if (liner_gradient_stop[0] <= gp && liner_gradient_stop[1] > gp)\n" \
+    "\t\tgl_FragColor = mix(vec4(liner_gradient_colors[1], 1.0f), vec4(liner_gradient_colors[0], 1.0f), (gp - liner_gradient_stop[0])/(liner_gradient_stop[1] - liner_gradient_stop[0]));\n" \
     "\telse\n" \
     "\t\tgl_FragColor = vec4(liner_gradient_colors[0], 1.0f);\n" \
     "}"
@@ -263,7 +261,8 @@ glinit_flower_context() {
     gfcontext.pvloc_mat_r = glGetUniformLocation(gfcontext.pprg.pid, "matrix_r");
     gfcontext.pvloc_mat_mf = glGetUniformLocation(gfcontext.pprg.pid, "matrix_mf");
     gfcontext.pvloc_mat_mp = glGetUniformLocation(gfcontext.pprg.pid, "matrix_mp");
-    gfcontext.pfloc_cor = glGetUniformLocation(gfcontext.pprg.pid, "liner_gradient_colors");
+    gfcontext.pfloc_lgc = glGetUniformLocation(gfcontext.pprg.pid, "liner_gradient_colors");
+	gfcontext.pfloc_lgs = glGetUniformLocation(gfcontext.pprg.pid, "liner_gradient_stop");
     glUseProgram(0);
 
     status = glcreate_programe(&(gfcontext.cprg), center_vshader, center_fshader);
@@ -272,8 +271,6 @@ glinit_flower_context() {
         exit(EXIT_FAILURE);
     }
     create_center_vbo();
-
-    fprintf(stdout, "%s\n", center_fshader);
 
     glUseProgram(gfcontext.cprg.pid);
     gfcontext.cvloc_ver = glGetAttribLocation(gfcontext.cprg.pid, "vertexs");
@@ -290,7 +287,7 @@ gldraw_petal(glflower_obj * pf) {
     glmat4 * m_r;
     glmat4 * m_mf;
     glmat4 * m_mp;
-    glangle ang = pf->fa;
+    glangle ang;
 
     glUseProgram(gfcontext.pprg.pid);
 
@@ -301,7 +298,7 @@ gldraw_petal(glflower_obj * pf) {
     glVertexAttribPointer(gfcontext.pvloc_ver, 3, GL_FLOAT, GL_FALSE, 3*sizeof(glfloat), 0);
     glEnableVertexAttribArray(gfcontext.pvloc_ver);
 
-    for (; ang < 360; ang += 90) {
+    for (ang = pf->fa; ang < 360; ang += 90) {
         m_s = glcreate_identify_mat4();
         m_r = glcreate_identify_mat4();
         m_mf = glcreate_identify_mat4();
@@ -319,7 +316,8 @@ gldraw_petal(glflower_obj * pf) {
         glmove_mat4(m_mf, &(pf->fm));
         glUniformMatrix4fv(gfcontext.pvloc_mat_mf, 1, true,  glget_mat4_array(m_mf));
 
-        glUniform3fv(gfcontext.pfloc_cor, 2, (const GLfloat *)g_petal_colors[pf->cf]);
+        glUniform3fv(gfcontext.pfloc_lgc, 2, (const GLfloat *)g_petal_colors[pf->cf]);
+		glUniform1fv(gfcontext.pfloc_lgs, 2, (const GLfloat *)g_petal_stop[pf->cf]);
 
         glDrawArrays(GL_TRIANGLE_FAN, 0, gfcontext.pbsize/3);
 

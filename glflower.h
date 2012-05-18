@@ -65,7 +65,8 @@ typedef struct _glflower_context {
     gllocation pvloc_mat_r;
     gllocation pvloc_mat_mf;
     gllocation pvloc_mat_mp;
-    gllocation pfloc_cor;
+    gllocation pfloc_lgc;
+	gllocation pfloc_lgs;
     
     glprograme cprg;
     glvbo  cvbo;
