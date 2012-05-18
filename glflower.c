@@ -149,45 +149,37 @@ glset_petal(glpetal * pp, glfloat m, glfloat r1, glfloat r2, glfloat z) {
 }
 
 static void
-push_arc(glvector ** pv, glarc * pa) {
-    glvec3 pt = {0};
-	unsigned int from = pa->from;
-	unsigned int to = pa->to;
+push_arc(glvector ** pv, glarc * pa, int step) {
+    int ang;
+    glvec3 pt;
 
-    int step = (to < from) ? -STEP : STEP;
-    int ang = from;
-
-    while (true) {
+    for (ang = pa->from; ang <= pa->to; ang += step)  {
         pt.x = (glfloat) (pa->c.x + pa->r * cos(PI*ang/180.0));
         pt.y = (glfloat) (pa->c.y + pa->r * sin(PI*ang/180.0));
         pt.z = (glfloat) pa->c.z;
         glpush_vec3(pv, &pt);
-
-        if (ang == to)
-            break;
-        else
-            ang += step;
     }
 }
 
 static void
 push_center_obj(glvector * * pv, glcircle * pc) {
-    glvec3 p = {0};
-    glarc a = {{0}};
+    glvec3 p;
+    glarc a;
     
     glpush_vec3(pv, &(pc->c));
 
     glassign_vec3(&p, &(pc->c));
     glset_arc(&a, &(pc->c), pc->r, 0, 360);
-    push_arc(pv, &a);
+    push_arc(pv, &a, STEP);
 }
 
 static void
 create_center_vbo() {
-    glvector * v = NULL;
-    glvec3 p = {0.0f, 0.0f, 0.0f};
-    glcircle c = {{0}};
+    glvector * v;
+    glcircle c;
+    glvec3 p;
 
+    glset_vec3(&p, 0.0f, 0.0f, 0.0f);
 	glset_circle(&c, &p, 0.5f);
     v = glalloc_vector(0);
     push_center_obj(&v, &c);
@@ -204,23 +196,23 @@ create_center_vbo() {
 
 static void
 push_petal_obj(glvector * * pv, glpetal * pp) {
-    glvec3 p = {0};
-    glarc a = {{0}};
+    glvec3 p;
+    glarc a;
 
     glset_vec3(&p, 0, 0, 0);
     glpush_vec3(pv, &p);
 
     glset_vec3(&p, pp->m - pp->r1, pp->r1, pp->z);
     glset_arc(&a, &p, pp->r1, 270, 360);
-    push_arc(pv, &a);
+    push_arc(pv, &a, STEP);
 
     glset_vec3(&p, pp->m - pp->r2, pp->m - pp->r2, pp->z);
     glset_arc(&a, &p, pp->r2, 0, 90);
-    push_arc(pv, &a);
+    push_arc(pv, &a, STEP);
 
     glset_vec3(&p, pp->r1, pp->m - pp->r1, pp->z);
     glset_arc(&a, &p, pp->r1, 90, 180);
-    push_arc(pv, &a);
+    push_arc(pv, &a, STEP);
 
     glset_vec3(&p, 0, 0, 0);
     glpush_vec3(pv, &p);
@@ -229,8 +221,8 @@ push_petal_obj(glvector * * pv, glpetal * pp) {
 
 static void
 create_petal_vbo() {
-    glvector * v = NULL;
-    glpetal petal = {0};
+    glvector * v;
+    glpetal petal;
 
     v = glalloc_vector(0);
     glset_petal(&petal, 1.0f,0.25f*1.0f, 0.50f*1.0f, 0.0f); 
