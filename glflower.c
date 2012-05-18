@@ -210,16 +210,16 @@ push_petal_obj(glvector * * pv, glpetal * pp) {
     glset_vec3(&p, 0, 0, 0);
     glpush_vec3(pv, &p);
 
-    glset_vec3(&p, pp->r1, pp->m - pp->r1, pp->z);
-    glset_arc(&a, &p, pp->r1, 180, 90);
+    glset_vec3(&p, pp->m - pp->r1, pp->r1, pp->z);
+    glset_arc(&a, &p, pp->r1, 270, 360);
     push_arc(pv, &a);
 
     glset_vec3(&p, pp->m - pp->r2, pp->m - pp->r2, pp->z);
-    glset_arc(&a, &p, pp->r2, 90, 0);
+    glset_arc(&a, &p, pp->r2, 0, 90);
     push_arc(pv, &a);
 
-    glset_vec3(&p, pp->m - pp->r1, pp->r1, pp->z);
-    glset_arc(&a, &p, pp->r1, 360, 270);
+    glset_vec3(&p, pp->r1, pp->m - pp->r1, pp->z);
+    glset_arc(&a, &p, pp->r1, 90, 180);
     push_arc(pv, &a);
 
     glset_vec3(&p, 0, 0, 0);

@@ -3,6 +3,7 @@
 *.exe
 *.a
 *.lib
+*.o
 
 #temp file
 *.swp
