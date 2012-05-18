@@ -33,17 +33,17 @@ glfloat g_screen_width = 400.0f;
 glfloat g_screen_height = 300.0f;
 
 //colors for center
-static glconst_float g_center_colors[][9] = {
+static glfloat g_center_colors[][9] = {
                 {1.0f, 1.0f, 204.0f/255.0f, 245.0f/255.0f, 169.0f/255.0f, 205.0f/255.0f, 1.0f, 1.0f, 204.0f/255.0f}
 };
 
-glfloat g_center_stop[][3] = {
+static glfloat g_center_stop[][3] = {
                 {0.0f, 0.30f, 0.80f}
 };
 
 
 //colors for petal
-glconst_float g_petal_colors[][6] = {
+static glfloat g_petal_colors[][6] = {
     {185.0f/255.0f, 51.0f/255.0f, 76.0f/255.0f, 240.0f/255.0f, 166.0f/255.0f, 199.0f/255.0f}
 };
 
@@ -80,7 +80,8 @@ static const glchar * petal_fshader =
     "\tif (gp <= liner_gradient_stop[0])\n" \
     "\t\tgl_FragColor = vec4(liner_gradient_colors[1], 1.0f);\n" \
     "\telse if (liner_gradient_stop[0] <= gp && liner_gradient_stop[1] > gp)\n" \
-    "\t\tgl_FragColor = mix(vec4(liner_gradient_colors[1], 1.0f), vec4(liner_gradient_colors[0], 1.0f), (gp - liner_gradient_stop[0])/(liner_gradient_stop[1] - liner_gradient_stop[0]));\n" \
+    "\t\tgl_FragColor = mix(vec4(liner_gradient_colors[1], 1.0f), vec4(liner_gradient_colors[0], 1.0f), " \
+    "(gp - liner_gradient_stop[0])/(liner_gradient_stop[1] - liner_gradient_stop[0]));\n" \
     "\telse\n" \
     "\t\tgl_FragColor = vec4(liner_gradient_colors[0], 1.0f);\n" \
     "}"
@@ -113,9 +114,11 @@ static const glchar * center_fshader =
     "\tif (gp <= radial_gradient_stop[0])\n" \
     "\t\tgl_FragColor = vec4(radial_gradient_color[0], 1.0f);\n" \
     "\telse if ((gp > radial_gradient_stop[0]) && (gp < radial_gradient_stop[1]))\n" \
-    "\t\tgl_FragColor = mix(vec4(radial_gradient_color[0], 1.0f), vec4(radial_gradient_color[1], 1.0f), (gp - radial_gradient_stop[0])/(radial_gradient_stop[1] - radial_gradient_stop[0]));\n" \
+    "\t\tgl_FragColor = mix(vec4(radial_gradient_color[0], 1.0f), vec4(radial_gradient_color[1], 1.0f)," \
+    "(gp - radial_gradient_stop[0])/(radial_gradient_stop[1] - radial_gradient_stop[0]));\n" \
     "\telse if ((gp >= radial_gradient_stop[1]) && (gp < radial_gradient_stop[2]))\n" \
-    "\t\tgl_FragColor = mix(vec4(radial_gradient_color[1], 1.0f), vec4(radial_gradient_color[2], 1.0f), (gp - radial_gradient_stop[1])/(radial_gradient_stop[2]-radial_gradient_stop[1]));\n" \
+    "\t\tgl_FragColor = mix(vec4(radial_gradient_color[1], 1.0f), vec4(radial_gradient_color[2], 1.0f), " \
+    "(gp - radial_gradient_stop[1])/(radial_gradient_stop[2]-radial_gradient_stop[1]));\n" \
     "\telse\n" \
     "\t\tgl_FragColor = vec4(radial_gradient_color[2], 1.0f);\n" \
     "}"
