@@ -158,8 +158,8 @@ push_arc(glvector ** pv, glarc * pa, int step) {
     glvec3 pt;
 
     for (ang = pa->from; ang <= pa->to; ang += step)  {
-        pt.x = (glfloat) (pa->c.x + pa->r * cos(PI*ang/180.0));
-        pt.y = (glfloat) (pa->c.y + pa->r * sin(PI*ang/180.0));
+        pt.x = (glfloat) (pa->c.x + pa->r * cos(PI*ang/180.0f));
+        pt.y = (glfloat) (pa->c.y + pa->r * sin(PI*ang/180.0f));
         pt.z = (glfloat) pa->c.z;
         glpush_vec3(pv, &pt);
     }
