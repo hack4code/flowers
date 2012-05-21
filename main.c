@@ -65,8 +65,13 @@ int main( void ) {
 
 static void
 render(void) {
+	glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_POLYGON_SMOOTH);
+    glClear(GL_DEPTH_BUFFER_BIT);
+	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	glClearColor(1.0, 1.0, 1.0, 0.0);
+	glClearColor(1.0, 1.0, 1.0, 1.0);
     glrender_flower_context();
     glutSwapBuffers();
 }

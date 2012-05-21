@@ -27,6 +27,10 @@
 
 #define STEP 30
 
+static const glfloat g_petal_depth = 0.0f;
+static const glfloat g_center_depth = -0.01f;
+
+
 extern const double PI;
 
 glfloat g_screen_width = 400.0f;
@@ -150,7 +154,7 @@ glset_petal(glpetal * pp, glfloat m, glfloat r1, glfloat r2, glfloat z) {
 
 static void
 push_arc(glvector ** pv, glarc * pa, int step) {
-    int ang;
+    unsigned int ang;
     glvec3 pt;
 
     for (ang = pa->from; ang <= pa->to; ang += step)  {
@@ -179,7 +183,7 @@ create_center_vbo() {
     glcircle c;
     glvec3 p;
 
-    glset_vec3(&p, 0.0f, 0.0f, 0.0f);
+    glset_vec3(&p, 0.0f, 0.0f, g_center_depth);
 	glset_circle(&c, &p, 0.5f);
     v = glalloc_vector(0);
     push_center_obj(&v, &c);
@@ -225,7 +229,7 @@ create_petal_vbo() {
     glpetal petal;
 
     v = glalloc_vector(0);
-    glset_petal(&petal, 1.0f,0.25f*1.0f, 0.50f*1.0f, 0.0f); 
+    glset_petal(&petal, 1.0f,0.25f*1.0f, 0.50f*1.0f, g_petal_depth); 
     push_petal_obj(&v, &petal);
 //	glprint_vector(v);
     gfcontext.pbsize = glget_vector_size(v);
