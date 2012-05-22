@@ -82,7 +82,7 @@ static const glchar * petal_fshader =
     "\tfloat gp;\n" \
     "\tgp = 1.0f - length(vertex_pos) * cos(atan(vertex_pos.y, vertex_pos.x) - 3.1415926f/4.0f)/sqrt(2.0f);\n" \
     "\tif (gp <= liner_gradient_stop[0])\n" \
-    "\t\tgl_FragColor = vec4(liner_gradient_colors[1], 1.0f);\n" \
+    "\t\tgl_FragColor = vec4(liner_gradient_colors[1], 0.95f);\n" \
     "\telse if (liner_gradient_stop[0] <= gp && liner_gradient_stop[1] > gp)\n" \
     "\t\tgl_FragColor = mix(vec4(liner_gradient_colors[1], 1.0f), vec4(liner_gradient_colors[0], 1.0f), " \
                         "(gp - liner_gradient_stop[0])/(liner_gradient_stop[1] - liner_gradient_stop[0]));\n" \
