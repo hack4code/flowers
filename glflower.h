@@ -38,7 +38,6 @@ typedef struct _glpetal {
     glfloat r2;
     glfloat z;
     glfloat l;
-//    glvec3 gradient_color[2];
 } glpetal;
 
 typedef struct _glcircle {
