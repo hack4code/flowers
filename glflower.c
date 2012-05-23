@@ -25,12 +25,8 @@
 #pragma comment(lib, "glew32.lib")
 #endif //_WIN32
 
-<<<<<<< HEAD
 #define STEP 30
 #define BRANCH_STEP 5
-=======
-#define STEP 10
->>>>>>> blend
 
 static const glfloat g_petal_depth = 0.0f;
 static const glfloat g_center_depth = -0.01f;
@@ -420,7 +416,7 @@ glrender_flower_context() {
 
 
 static void 
-push_branch(glvec3 * v, glbranch * b, unsigned int step) {
+push_branch(glvector * v, glbranch * b, unsigned int step) {
     glfloat r = b->r;
     glfloat max = b->wmax;
     glfloat min = b->wmin;
@@ -429,19 +425,21 @@ push_branch(glvec3 * v, glbranch * b, unsigned int step) {
     glfloat cx = b->r * sin(glang_transform(b->a/2));
     glfloat cy = b->r * cos(glang_transform(b->a/2));
 
+    glfloat fa;
+    glvec3 p;
     unsigned int i;
 
     for (i = 0; i <= ns; ++i) {
-        fa = glang_transform(a);
+        fa = glang_transform(270 - b->a/2 + i*step);
         p.x = cx + r * cos(fa) - (max - i*ws)*cos(fa);
         p.y = cy + r * sin(fa) + (max - i*ws)*sin(fa);
         p.z = b->z;
-        glpush_vec3(v, &p);
+        glpush_vec3(&v, &p);
 
         p.x = cx + r * cos(fa) + (max - i*ws)*cos(fa);
         p.y = cy + r * sin(fa) - (max - i*ws)*sin(fa);
         p.z = b->z;
-        glpush_vec3(v, &p);
+        glpush_vec3(&v, &p);
     }
 }
 
@@ -449,3 +447,4 @@ static void
 push_branc_obj(glvector * v, glbranch * b) {
     push_branch(v, b, BRANCH_STEP);
 }
+

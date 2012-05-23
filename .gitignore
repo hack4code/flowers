@@ -4,6 +4,7 @@
 *.a
 *.lib
 *.o
+mac/
 
 #temp file
 *.swp

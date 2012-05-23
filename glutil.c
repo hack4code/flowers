@@ -261,6 +261,72 @@ glget_mat4_array(glmat4 * m) {
     return m->vecs;
 }
 
+void 
+glmutiply_mat4(glmat4 * destm, glmat4 * srcm) {
+    glfloat * dest = destm->vecs;
+    glfloat * src = srcm->vecs;
+
+    glfloat a11 = dest[0];
+    glfloat a12 = dest[1];
+    glfloat a13 = dest[2];
+    glfloat a14 = dest[3];
+
+    glfloat a21 = dest[4];
+    glfloat a22 = dest[5];
+    glfloat a23 = dest[6];
+    glfloat a24 = dest[7];
+
+    glfloat a31 = dest[8];
+    glfloat a32 = dest[9];
+    glfloat a33 = dest[10];
+    glfloat a34 = dest[11];
+
+    glfloat a41 = dest[12];
+    glfloat a42 = dest[13];
+    glfloat a43 = dest[14];
+    glfloat a44 = dest[15];
+
+    glfloat b11 = src[0];
+    glfloat b12 = src[1];
+    glfloat b13 = src[2];
+    glfloat b14 = src[3];
+
+    glfloat b21 = src[4];
+    glfloat b22 = src[5];
+    glfloat b23 = src[6];
+    glfloat b24 = src[7];
+
+    glfloat b31 = src[8];
+    glfloat b32 = src[9];
+    glfloat b33 = src[10];
+    glfloat b34 = src[11];
+
+    glfloat b41 = src[12];
+    glfloat b42 = src[13];
+    glfloat b43 = src[14];
+    glfloat b44 = src[15];
+
+
+    dest[0] = a11*b11 + a12*b21 + a13*b31 + a14*b41;
+    dest[1] = a11*b12 + a12*b22 + a13*b32 + a14*b42;
+    dest[2] = a11*b13 + a12*b23 + a13*b33 + a14*b43;
+    dest[3] = a11*b14 + a12*b24 + a13*b34 + a14*b44;
+    
+    dest[4] = a21*b11 + a22*b21 + a23*b31 + a24*b41;
+    dest[5] = a21*b12 + a22*b22 + a23*b32 + a24*b42;
+    dest[6] = a21*b13 + a22*b23 + a23*b33 + a24*b43;
+    dest[7] = a21*b14 + a22*b24 + a23*b34 + a24*b44;
+
+    dest[8] = a31*b11 + a32*b21 + a33*b31 + a34*b41;
+    dest[9] = a31*b12 + a32*b22 + a33*b32 + a34*b42;
+    dest[10] = a31*b13 + a32*b23 + a33*b33 + a34*b43;
+    dest[11] = a31*b14 + a32*b24 + a33*b34 + a34*b44;
+
+    dest[12] = a41*b11 + a42*b21 + a43*b31 + a44*b41;
+    dest[13] = a41*b12 + a42*b22 + a43*b32 + a44*b42;
+    dest[14] = a41*b13 + a42*b23 + a43*b33 + a44*b43;
+    dest[15] = a41*b14 + a42*b24 + a43*b34 + a44*b44;
+}
 
 //
 glfloat glang_transform(unsigned int a) {
