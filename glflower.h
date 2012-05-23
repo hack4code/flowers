@@ -87,6 +87,14 @@ typedef struct _glflower {
     glcolor_id cf;
 } glflower;
 
+typedef struct _glbranch {
+    glfloat r;
+    glfloat wmax;
+    glfloat wmin;
+    glangle a;
+    glfloat z;
+} glbranch;
+
 void glinit_flower_context();
 void glrender_flower_context();
 

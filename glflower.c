@@ -26,6 +26,7 @@
 #endif //_WIN32
 
 #define STEP 30
+#define BRANCH_STEP 5
 
 static const glfloat g_petal_depth = 0.0f;
 static const glfloat g_center_depth = -0.01f;
@@ -411,4 +412,36 @@ glrender_flower_context() {
 
 	gldraw_petal(&fo);
     gldraw_center(&fo);   
+}
+
+
+static void 
+push_branch(glvec3 * v, glbranch * b, unsigned int step) {
+    glfloat r = b->r;
+    glfloat max = b->wmax;
+    glfloat min = b->wmin;
+    unsigned int ns = b->a/step;
+    glfloat ws = (max - min)/ns;
+    glfloat cx = b->r * sin(glang_transform(b->a/2));
+    glfloat cy = b->r * cos(glang_transform(b->a/2));
+
+    unsigned int i;
+
+    for (i = 0; i <= ns; ++i) {
+        fa = glang_transform(a);
+        p.x = cx + r * cos(fa) - (max - i*ws)*cos(fa);
+        p.y = cy + r * sin(fa) + (max - i*ws)*sin(fa);
+        p.z = b->z;
+        glpush_vec3(v, &p);
+
+        p.x = cx + r * cos(fa) + (max - i*ws)*cos(fa);
+        p.y = cy + r * sin(fa) - (max - i*ws)*sin(fa);
+        p.z = b->z;
+        glpush_vec3(v, &p);
+    }
+}
+
+static void
+push_branc_obj(glvector * v, glbranch * b) {
+    push_branch(v, b, BRANCH_STEP);
 }
