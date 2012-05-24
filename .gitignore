@@ -4,8 +4,8 @@
 *.a
 *.lib
 *.o
-mac/
 *.suo
+mac/
 
 #temp file
 *.swp
