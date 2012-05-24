@@ -1,10 +1,11 @@
-#exe file
+﻿#exe file
 *.dll
 *.exe
 *.a
 *.lib
 *.o
 mac/
+*.suo
 
 #temp file
 *.swp
