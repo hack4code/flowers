@@ -103,6 +103,7 @@ void glmove_mat4(glmat4 *, glvec3 *);
 void glmvtrans_mat4(glmat4 *, glfloat, glfloat);
 glfloat * glget_mat4_array(glmat4 *);
 void glmutiply_mat4(glmat4 *, glmat4 *);
+void glassign_mat4(glmat4 *, glmat4 *);
 
 glfloat glang_transform(unsigned int);
 

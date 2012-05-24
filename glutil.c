@@ -261,6 +261,11 @@ glget_mat4_array(glmat4 * m) {
     return m->vecs;
 }
 
+void
+glassign_mat4(glmat4 * dest, glmat4 * src) {
+    memcpy((void *)dest, (void *)src, sizeof(*dest));
+}
+
 void 
 glmutiply_mat4(glmat4 * destm, glmat4 * srcm) {
     glfloat * dest = destm->vecs;

@@ -129,8 +129,28 @@ static const glchar * center_fshader =
     "}"
 };
 
-static glflower_context gfcontext = {{0}};
-static glbranch_context gbcontext = {{0}};
+
+static const glchar * branch_vshader =
+{
+    "#version 120\n\n" \
+    "uniform mat4 mat;\n\n" \
+    "void main()\n" \
+    "{\n" \
+    "\tgl_Position = mat * vec4(vertexs, 1.0f);\n" \
+    "}"
+};
+
+static const glchar * branch_fshader =
+{
+    "#version 120\n\n" \
+    "void main()\n" \
+    "{\n" \
+    "\tgl_FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
+    "}"
+};
+
+static glflower_context gfcontext;
+static glbranch_context gbcontext;
 
 static void
 glset_arc(glarc * parc, glvec3 * pp, glfloat r, unsigned int from, unsigned int to) {
@@ -279,6 +299,26 @@ glinit_flower_context() {
     gfcontext.cvloc_mat_m = glGetUniformLocation(gfcontext.cprg.pid, "matrix_m");
     gfcontext.cfloc_rgc = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_color");
     gfcontext.cfloc_rgs = glGetUniformLocation(gfcontext.cprg.pid, "radial_gradient_stop");
+    glUseProgram(0);
+}
+
+void
+glinit_branch_context() {
+    bool status;
+
+    memset(&gbcontext, 0, sizeof(gbcontext));
+
+    status = glcreate_programe(&(gbcontext.bprg), branch_vshader, branch_fshader);
+    if (!status) {
+        fprintf(stdout, "compile branch programe error!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    create_branch_obj();
+
+    glUseProgram(gbcontext.bprg.pid);
+    gbcontext.bvloc_ver = glGetAttribLocation(gbcontext.bprg.pid, "vertexs");
+    gbcontext.bvloc_mat = glGetUniformLocation(gbcontext.bprg.pid, "mat");
     glUseProgram(0);
 }
 
@@ -450,46 +490,48 @@ push_branh_obj(glvector * * v, glbranch * b) {
 }
 
 static void
-create_branch_obj() {
-    glvector * v;
-    glbranch b;
-
-    b.r = 400.0f;
-    b.wmax = 20.0f;
-    b.wmin = 10.0f;
-    b.a = 90;
-    b.z = 0.0f;
-
-    v = glalloc_vector(0);
-    push_branh_obj(&v, &b);
-    gbcontext.bbsize = glget_vector_size(v);
-    
-    glGenBuffers(1, &(gbcontext.bvbo));
-    glBindBuffer(GL_ARRAY_BUFFER, gbcontext.bvbo);
-    glBufferData(GL_ARRAY_BUFFER, gbcontext.bbsize*sizeof(glfloat), glget_vector_array(v), GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glfree_vector(v);
-}
-
-static void
-set_branch_obj(glbranch_obj * bo, glbranch * b) {
-    glmat4 * m_m = glcreate_identify_mat4();
-    glmat4 * m_r = glcreate_identify_mat4();
-    glmat4 * m_s = glcreate_identify_mat4();
+create_branch_obj(glbranch_obj * bo, glbranch * b) {
+    glvector * vec;
+    glmat4  m_t1;
+    glmat4  m_t2;
     glvec3 v;
 
-    glrotatez_mat4(m_r, b->a);
-    glmutiply_mat4(m_m, m_r);
-    glfree_mat4(m_r);
-    m_r = NULL;
+    vec = glalloc_vector(0);
+    push_branh_obj(&vec, &b);
+    bo->bbsize = glget_vector_size(vec);
+    
+    glGenBuffers(1, &(bo->bvbo));
+    glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
+    glBufferData(GL_ARRAY_BUFFER, bo->bbsize*sizeof(glfloat), glget_vector_array(vec), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glfree_vector(vec);
+    vec = NULL;
+
+    glset_identify_mat4(&m_t1);
+    glrotatez_mat4(&m_t1, b->r);
+
+    glset_identify_mat4(&m_t2);
+    glrotatez_mat4(&m_t2, 180);
+    glmutiply_mat4(&m_t2, &m_t1);
 
     v.x = 2.0f/g_screen_width;
     v.y = 2.0f/g_screen_height;
     v.z = 1.0f;
+    glset_identify_mat4(&m_t1);
+    glscale_mat4(&m_t1, &v);
+    glmutiply_mat4(&m_t1, &m_t2);
 
-    glscale_mat4(m_s, &v);
-    glmutiply_mat4(m_m, m_s);
-    glfree_mat4(m_s);
-    m_s = NULL;
+    glset_identify_mat4(&m_t2);
+    v.x = -1.0f;
+    v.y = -1.0f;
+    v.z = 0.0f;
+    glmove_mat4(&m_t2, &v);
+
+    glmutiply_mat4(&m_t2, &m_t1);
+    glassign_mat4(&(bo->m), &m_t2);
+}
+
+static void
+draw_branch_obj(glbranch_obj * b) {
 }

@@ -88,22 +88,25 @@ typedef struct _glflower {
 } glflower;
 
 typedef struct _glbranch_context {
-    glvbo bvbo;
-    glvao bvao;
-    size_t bbsize;
+    glprograme bprg;
+    gllocation bvloc_ver;
+    gllocation bvloc_mat;
 } glbranch_context;
 
 typedef struct _glbranch_obj {
+    glvbo bvbo;
+    glvao bvao;
+    size_t bbsize;
     glmat4 m;
-    glcolor_id cid;
 } glbranch_obj;
 
 typedef struct _glbranch {
     glfloat r;
     glfloat wmax;
     glfloat wmin;
-    glangle a;
+    glangle al;
     glfloat z;
+    glangle ar;
 } glbranch;
 
 void glinit_flower_context();
