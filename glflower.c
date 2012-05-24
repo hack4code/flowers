@@ -130,6 +130,7 @@ static const glchar * center_fshader =
 };
 
 static glflower_context gfcontext = {{0}};
+static glbranch_context gbcontext = {{0}};
 
 static void
 glset_arc(glarc * parc, glvec3 * pp, glfloat r, unsigned int from, unsigned int to) {
@@ -416,14 +417,14 @@ glrender_flower_context() {
 
 
 static void 
-push_branch(glvector * v, glbranch * b, unsigned int step) {
+push_branch(glvector * * v, glbranch * b, unsigned int step) {
     glfloat r = b->r;
     glfloat max = b->wmax;
     glfloat min = b->wmin;
     unsigned int ns = b->a/step;
     glfloat ws = (max - min)/ns;
-    glfloat cx = b->r * sin(glang_transform(b->a/2));
-    glfloat cy = b->r * cos(glang_transform(b->a/2));
+    glfloat cx = b->r * (glfloat)sin(glang_transform(b->a/2));
+    glfloat cy = b->r * (glfloat)cos(glang_transform(b->a/2));
 
     glfloat fa;
     glvec3 p;
@@ -431,20 +432,64 @@ push_branch(glvector * v, glbranch * b, unsigned int step) {
 
     for (i = 0; i <= ns; ++i) {
         fa = glang_transform(270 - b->a/2 + i*step);
-        p.x = cx + r * cos(fa) - (max - i*ws)*cos(fa);
-        p.y = cy + r * sin(fa) + (max - i*ws)*sin(fa);
+        p.x = cx + r * (glfloat)cos(fa) - (max - i*ws)*(glfloat)cos(fa);
+        p.y = cy + r * (glfloat)sin(fa) + (max - i*ws)*(glfloat)sin(fa);
         p.z = b->z;
-        glpush_vec3(&v, &p);
+        glpush_vec3(v, &p);
 
-        p.x = cx + r * cos(fa) + (max - i*ws)*cos(fa);
-        p.y = cy + r * sin(fa) - (max - i*ws)*sin(fa);
+        p.x = cx + r * (glfloat)cos(fa) + (max - i*ws)*(glfloat)cos(fa);
+        p.y = cy + r * (glfloat)sin(fa) - (max - i*ws)*(glfloat)sin(fa);
         p.z = b->z;
-        glpush_vec3(&v, &p);
+        glpush_vec3(v, &p);
     }
 }
 
 static void
-push_branc_obj(glvector * v, glbranch * b) {
+push_branh_obj(glvector * * v, glbranch * b) {
     push_branch(v, b, BRANCH_STEP);
 }
 
+static void
+create_branch_obj() {
+    glvector * v;
+    glbranch b;
+
+    b.r = 400.0f;
+    b.wmax = 20.0f;
+    b.wmin = 10.0f;
+    b.a = 90;
+    b.z = 0.0f;
+
+    v = glalloc_vector(0);
+    push_branh_obj(&v, &b);
+    gbcontext.bbsize = glget_vector_size(v);
+    
+    glGenBuffers(1, &(gbcontext.bvbo));
+    glBindBuffer(GL_ARRAY_BUFFER, gbcontext.bvbo);
+    glBufferData(GL_ARRAY_BUFFER, gbcontext.bbsize*sizeof(glfloat), glget_vector_array(v), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glfree_vector(v);
+}
+
+static void
+set_branch_obj(glbranch_obj * bo, glbranch * b) {
+    glmat4 * m_m = glcreate_identify_mat4();
+    glmat4 * m_r = glcreate_identify_mat4();
+    glmat4 * m_s = glcreate_identify_mat4();
+    glvec3 v;
+
+    glrotatez_mat4(m_r, b->a);
+    glmutiply_mat4(m_m, m_r);
+    glfree_mat4(m_r);
+    m_r = NULL;
+
+    v.x = 2.0f/g_screen_width;
+    v.y = 2.0f/g_screen_height;
+    v.z = 1.0f;
+
+    glscale_mat4(m_s, &v);
+    glmutiply_mat4(m_m, m_s);
+    glfree_mat4(m_s);
+    m_s = NULL;
+}

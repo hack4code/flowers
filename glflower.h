@@ -87,6 +87,17 @@ typedef struct _glflower {
     glcolor_id cf;
 } glflower;
 
+typedef struct _glbranch_context {
+    glvbo bvbo;
+    glvao bvao;
+    size_t bbsize;
+} glbranch_context;
+
+typedef struct _glbranch_obj {
+    glmat4 m;
+    glcolor_id cid;
+} glbranch_obj;
+
 typedef struct _glbranch {
     glfloat r;
     glfloat wmax;
