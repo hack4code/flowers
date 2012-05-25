@@ -325,7 +325,7 @@ glinit_branch_context() {
     glUseProgram(0);
 
 	b.al = 90;
-	b.ar = 0;
+	b.ar = 45;
 	b.r = 400;
 	b.wmax = 20;
 	b.wmin = 10;
@@ -457,20 +457,20 @@ push_branch(glvector * * v, glbranch * b, unsigned int step) {
     glfloat cy = r * (glfloat)cos(glang_transform(b->al/2));
 
     glfloat fa;
-    glvec3 p;
+    glvec3 p1,p2;
     unsigned int i;
 
     for (i = 0; i <= ns; ++i) {
         fa = glang_transform(270 - b->al/2 + i*step);
-        p.x = cx + r * (glfloat)cos(fa) - (max - i*ws)*(glfloat)cos(fa);
-        p.y = cy + r * (glfloat)sin(fa) + (max - i*ws)*(glfloat)sin(fa);
-        p.z = b->z;
-        glpush_vec3(v, &p);
+        p1.x = cx + (r - max + i*ws) * (glfloat)cos(fa);
+        p1.y = cy + (r - max + i*ws) * (glfloat)sin(fa);
+        p1.z = b->z;
+        glpush_vec3(v, &p1);
 
-        p.x = cx + r * (glfloat)cos(fa) + (max - i*ws)*(glfloat)cos(fa);
-        p.y = cy + r * (glfloat)sin(fa) - (max - i*ws)*(glfloat)sin(fa);
-        p.z = b->z;
-        glpush_vec3(v, &p);
+        p2.x = cx + (r + max - i*ws) * (glfloat)cos(fa);
+        p2.y = cy + (r + max - i*ws) * (glfloat)sin(fa);
+        p2.z = b->z;
+        glpush_vec3(v, &p2);
     }
 }
 
@@ -502,7 +502,7 @@ create_branch_obj(glbranch_obj * bo, glbranch * b) {
     glBindVertexArray(0);
 
     glset_identify_mat4(&m_m);
-    //glrotatez_mat4(&m_m, b->ar);
+    glrotatez_mat4(&m_m, b->ar);
 
     glset_identify_mat4(&m_t);
     glrotatez_mat4(&m_t, 180);
@@ -515,13 +515,13 @@ create_branch_obj(glbranch_obj * bo, glbranch * b) {
     glscale_mat4(&m_t, &v);
     glmutiply_mat4(&m_m, &m_t);
 
-    //glset_identify_mat4(&m_t);
-    //v.x = -1.0f;
-    //v.y = -1.0f;
-    //v.z = 0.0f;
-    //glmove_mat4(&m_t, &v);
+    glset_identify_mat4(&m_t);
+    v.x = 1.0f;
+    v.y = 1.0f;
+    v.z = 0.0f;
+    glmove_mat4(&m_t, &v);
 
-    //glmutiply_mat4(&m_m, &m_t);
+    glmutiply_mat4(&m_m, &m_t);
     glassign_mat4(&(bo->m), &m_m);
 }
 
@@ -532,7 +532,7 @@ gldraw_branch(glbranch_obj * bo) {
     glUniformMatrix4fv(gbcontext.bvloc_mat, 1, true,  glget_mat4_array(&(bo->m)));
 
     glBindVertexArray(bo->bvao);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, bo->bbsize/3);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, bo->bbsize-2);
 
     glBindVertexArray(0);
 	glUseProgram(0);
