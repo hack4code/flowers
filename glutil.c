@@ -271,45 +271,45 @@ glmutiply_mat4(glmat4 * destm, glmat4 * srcm) {
     glfloat * dest = destm->vecs;
     glfloat * src = srcm->vecs;
 
-    glfloat a11 = dest[0];
-    glfloat a12 = dest[1];
-    glfloat a13 = dest[2];
-    glfloat a14 = dest[3];
+    glfloat a11 = src[0];
+    glfloat a12 = src[1];
+    glfloat a13 = src[2];
+    glfloat a14 = src[3];
 
-    glfloat a21 = dest[4];
-    glfloat a22 = dest[5];
-    glfloat a23 = dest[6];
-    glfloat a24 = dest[7];
+    glfloat a21 = src[4];
+    glfloat a22 = src[5];
+    glfloat a23 = src[6];
+    glfloat a24 = src[7];
 
-    glfloat a31 = dest[8];
-    glfloat a32 = dest[9];
-    glfloat a33 = dest[10];
-    glfloat a34 = dest[11];
+    glfloat a31 = src[8];
+    glfloat a32 = src[9];
+    glfloat a33 = src[10];
+    glfloat a34 = src[11];
 
-    glfloat a41 = dest[12];
-    glfloat a42 = dest[13];
-    glfloat a43 = dest[14];
-    glfloat a44 = dest[15];
+    glfloat a41 = src[12];
+    glfloat a42 = src[13];
+    glfloat a43 = src[14];
+    glfloat a44 = src[15];
 
-    glfloat b11 = src[0];
-    glfloat b12 = src[1];
-    glfloat b13 = src[2];
-    glfloat b14 = src[3];
+    glfloat b11 = dest[0];
+    glfloat b12 = dest[1];
+    glfloat b13 = dest[2];
+    glfloat b14 = dest[3];
 
-    glfloat b21 = src[4];
-    glfloat b22 = src[5];
-    glfloat b23 = src[6];
-    glfloat b24 = src[7];
+    glfloat b21 = dest[4];
+    glfloat b22 = dest[5];
+    glfloat b23 = dest[6];
+    glfloat b24 = dest[7];
 
-    glfloat b31 = src[8];
-    glfloat b32 = src[9];
-    glfloat b33 = src[10];
-    glfloat b34 = src[11];
+    glfloat b31 = dest[8];
+    glfloat b32 = dest[9];
+    glfloat b33 = dest[10];
+    glfloat b34 = dest[11];
 
-    glfloat b41 = src[12];
-    glfloat b42 = src[13];
-    glfloat b43 = src[14];
-    glfloat b44 = src[15];
+    glfloat b41 = dest[12];
+    glfloat b42 = dest[13];
+    glfloat b43 = dest[14];
+    glfloat b44 = dest[15];
 
 
     dest[0] = a11*b11 + a12*b21 + a13*b31 + a14*b41;

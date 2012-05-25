@@ -94,8 +94,8 @@ typedef struct _glbranch_context {
 } glbranch_context;
 
 typedef struct _glbranch_obj {
-    glvbo bvbo;
     glvao bvao;
+    glvbo bvbo;
     size_t bbsize;
     glmat4 m;
 } glbranch_obj;
@@ -110,6 +110,7 @@ typedef struct _glbranch {
 } glbranch;
 
 void glinit_flower_context();
+void glinit_branch_context();
 void glrender_flower_context();
 
 #endif //__GLFLOWER_H__

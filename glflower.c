@@ -133,6 +133,7 @@ static const glchar * center_fshader =
 static const glchar * branch_vshader =
 {
     "#version 120\n\n" \
+	"attribute vec3 vertexs;\n" \
     "uniform mat4 mat;\n\n" \
     "void main()\n" \
     "{\n" \
@@ -302,9 +303,13 @@ glinit_flower_context() {
     glUseProgram(0);
 }
 
+static 	glbranch_obj g_bo;
+void create_branch_obj(glbranch_obj *, glbranch *);
+
 void
 glinit_branch_context() {
     bool status;
+	glbranch b;
 
     memset(&gbcontext, 0, sizeof(gbcontext));
 
@@ -314,12 +319,18 @@ glinit_branch_context() {
         exit(EXIT_FAILURE);
     }
 
-    create_branch_obj();
-
     glUseProgram(gbcontext.bprg.pid);
     gbcontext.bvloc_ver = glGetAttribLocation(gbcontext.bprg.pid, "vertexs");
     gbcontext.bvloc_mat = glGetUniformLocation(gbcontext.bprg.pid, "mat");
     glUseProgram(0);
+
+	b.al = 90;
+	b.ar = 0;
+	b.r = 400;
+	b.wmax = 20;
+	b.wmin = 10;
+	b.z = 0;
+	create_branch_obj(&g_bo, &b);
 }
 
 static void 
@@ -435,6 +446,99 @@ set_flower_obj(glflower_obj * fo, glflower * fs) {
     fo->cf = fs->cf;
 }
 
+static void 
+push_branch(glvector * * v, glbranch * b, unsigned int step) {
+    glfloat r = b->r;
+    glfloat max = b->wmax;
+    glfloat min = b->wmin;
+    unsigned int ns = b->al/step;
+    glfloat ws = (max - min)/ns;
+    glfloat cx = r * (glfloat)sin(glang_transform(b->al/2));
+    glfloat cy = r * (glfloat)cos(glang_transform(b->al/2));
+
+    glfloat fa;
+    glvec3 p;
+    unsigned int i;
+
+    for (i = 0; i <= ns; ++i) {
+        fa = glang_transform(270 - b->al/2 + i*step);
+        p.x = cx + r * (glfloat)cos(fa) - (max - i*ws)*(glfloat)cos(fa);
+        p.y = cy + r * (glfloat)sin(fa) + (max - i*ws)*(glfloat)sin(fa);
+        p.z = b->z;
+        glpush_vec3(v, &p);
+
+        p.x = cx + r * (glfloat)cos(fa) + (max - i*ws)*(glfloat)cos(fa);
+        p.y = cy + r * (glfloat)sin(fa) - (max - i*ws)*(glfloat)sin(fa);
+        p.z = b->z;
+        glpush_vec3(v, &p);
+    }
+}
+
+
+static void
+create_branch_obj(glbranch_obj * bo, glbranch * b) {
+    glvector * vec;
+    glmat4 m_m;
+    glmat4  m_t;
+    glvec3 v;
+
+    vec = glalloc_vector(0);
+    push_branch(&vec, b, BRANCH_STEP);
+    bo->bbsize = glget_vector_size(vec);
+	glprint_vector(vec);
+    
+    glGenBuffers(1, &(bo->bvbo));
+    glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
+    glBufferData(GL_ARRAY_BUFFER, bo->bbsize*sizeof(glfloat), glget_vector_array(vec), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glfree_vector(vec);
+    vec = NULL;
+
+    glGenVertexArrays(1, &(bo->bvao));
+    glBindVertexArray(bo->bvao);
+    glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
+    glVertexAttribPointer(gbcontext.bvloc_ver, 3, GL_FLOAT, GL_FALSE, 3*sizeof(glfloat), 0);
+	glEnableVertexAttribArray(gbcontext.bvloc_ver);
+    glBindVertexArray(0);
+
+    glset_identify_mat4(&m_m);
+    //glrotatez_mat4(&m_m, b->ar);
+
+    glset_identify_mat4(&m_t);
+    glrotatez_mat4(&m_t, 180);
+    glmutiply_mat4(&m_m, &m_t);
+
+    v.x = 2.0f/g_screen_width;
+    v.y = 2.0f/g_screen_height;
+    v.z = 1.0f;
+    glset_identify_mat4(&m_t);
+    glscale_mat4(&m_t, &v);
+    glmutiply_mat4(&m_m, &m_t);
+
+    //glset_identify_mat4(&m_t);
+    //v.x = -1.0f;
+    //v.y = -1.0f;
+    //v.z = 0.0f;
+    //glmove_mat4(&m_t, &v);
+
+    //glmutiply_mat4(&m_m, &m_t);
+    glassign_mat4(&(bo->m), &m_m);
+}
+
+static void
+gldraw_branch(glbranch_obj * bo) {
+    glUseProgram(gbcontext.bprg.pid);
+
+    glUniformMatrix4fv(gbcontext.bvloc_mat, 1, true,  glget_mat4_array(&(bo->m)));
+
+    glBindVertexArray(bo->bvao);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, bo->bbsize/3);
+
+    glBindVertexArray(0);
+	glUseProgram(0);
+}
+
+
 void
 glrender_flower_context() {
     glflower f;
@@ -449,89 +553,11 @@ glrender_flower_context() {
     f.cf = 0;
     f.a = 30;
 
+
     set_flower_obj(&fo, &f);
 
-	gldraw_petal(&fo);
-    gldraw_center(&fo);   
-}
 
-
-static void 
-push_branch(glvector * * v, glbranch * b, unsigned int step) {
-    glfloat r = b->r;
-    glfloat max = b->wmax;
-    glfloat min = b->wmin;
-    unsigned int ns = b->a/step;
-    glfloat ws = (max - min)/ns;
-    glfloat cx = b->r * (glfloat)sin(glang_transform(b->a/2));
-    glfloat cy = b->r * (glfloat)cos(glang_transform(b->a/2));
-
-    glfloat fa;
-    glvec3 p;
-    unsigned int i;
-
-    for (i = 0; i <= ns; ++i) {
-        fa = glang_transform(270 - b->a/2 + i*step);
-        p.x = cx + r * (glfloat)cos(fa) - (max - i*ws)*(glfloat)cos(fa);
-        p.y = cy + r * (glfloat)sin(fa) + (max - i*ws)*(glfloat)sin(fa);
-        p.z = b->z;
-        glpush_vec3(v, &p);
-
-        p.x = cx + r * (glfloat)cos(fa) + (max - i*ws)*(glfloat)cos(fa);
-        p.y = cy + r * (glfloat)sin(fa) - (max - i*ws)*(glfloat)sin(fa);
-        p.z = b->z;
-        glpush_vec3(v, &p);
-    }
-}
-
-static void
-push_branh_obj(glvector * * v, glbranch * b) {
-    push_branch(v, b, BRANCH_STEP);
-}
-
-static void
-create_branch_obj(glbranch_obj * bo, glbranch * b) {
-    glvector * vec;
-    glmat4  m_t1;
-    glmat4  m_t2;
-    glvec3 v;
-
-    vec = glalloc_vector(0);
-    push_branh_obj(&vec, &b);
-    bo->bbsize = glget_vector_size(vec);
-    
-    glGenBuffers(1, &(bo->bvbo));
-    glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
-    glBufferData(GL_ARRAY_BUFFER, bo->bbsize*sizeof(glfloat), glget_vector_array(vec), GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glfree_vector(vec);
-    vec = NULL;
-
-    glset_identify_mat4(&m_t1);
-    glrotatez_mat4(&m_t1, b->r);
-
-    glset_identify_mat4(&m_t2);
-    glrotatez_mat4(&m_t2, 180);
-    glmutiply_mat4(&m_t2, &m_t1);
-
-    v.x = 2.0f/g_screen_width;
-    v.y = 2.0f/g_screen_height;
-    v.z = 1.0f;
-    glset_identify_mat4(&m_t1);
-    glscale_mat4(&m_t1, &v);
-    glmutiply_mat4(&m_t1, &m_t2);
-
-    glset_identify_mat4(&m_t2);
-    v.x = -1.0f;
-    v.y = -1.0f;
-    v.z = 0.0f;
-    glmove_mat4(&m_t2, &v);
-
-    glmutiply_mat4(&m_t2, &m_t1);
-    glassign_mat4(&(bo->m), &m_t2);
-}
-
-static void
-draw_branch_obj(glbranch_obj * b) {
+	//gldraw_petal(&fo);
+ //   gldraw_center(&fo);   
+	gldraw_branch(&g_bo);
 }

@@ -67,7 +67,7 @@ int main( void ) {
 
 static void
 render(void) {
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_POLYGON_SMOOTH);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -99,6 +99,7 @@ main(int argc, char** argv)
 	//sversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
  //   fprintf(stdout, "glsl version = %s\n", sversion);
 	glinit_flower_context();
+	glinit_branch_context();
 
     glutMainLoop();
 

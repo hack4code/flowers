@@ -5,7 +5,7 @@
 *.lib
 *.o
 *.suo
-mac/
+
 
 #temp file
 *.swp
@@ -16,4 +16,4 @@ mac/
 
 #debug files
 *.manifest
-Debug/
+
