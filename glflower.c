@@ -26,7 +26,7 @@
 #endif //_WIN32
 
 #define STEP 30
-#define BRANCH_STEP 5
+#define BRANCH_STEP 1
 
 static const glfloat g_petal_depth = 0.0f;
 static const glfloat g_center_depth = -0.01f;
@@ -394,8 +394,8 @@ create_branch() {
 	b.ar = 30;
 	b.rx = 200;
     b.ry = 100;
-	b.wmax = 10;
-	b.wmin = 5;
+	b.wmax = 12;
+	b.wmin = 2;
 	b.z = 0;
 
 	create_branch_obj(&g_bo, &b);
