@@ -34,12 +34,12 @@ int main( void ) {
     }
 
     // Open an OpenGL window
-    if( !glfwOpenWindow(400,300, 0,0,0,0,0,0, GLFW_WINDOW)) {
+    if( !glfwOpenWindow(400, 400, 0,0,0,0,0,0, GLFW_WINDOW)) {
         glfwTerminate();
         exit( EXIT_FAILURE );
     }
 
-	glinit_flower_context();
+	glinit_tree_context();
 
     while(running) {
         glEnable(GL_CULL_FACE);
@@ -49,7 +49,7 @@ int main( void ) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
         glClearColor(1.0, 1.0, 1.0, 1.0);
-        glrender_flower_context();
+        glrender_tree_context();
         glfwSwapBuffers();
         running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
     }
@@ -76,7 +76,7 @@ render(void) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable( GL_BLEND );
 	glClearColor(1.0, 1.0, 1.0, 1.0);
-    glrender_flower_context();
+    glrender_tree_context();
     glutSwapBuffers();
 }
 

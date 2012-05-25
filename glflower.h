@@ -91,6 +91,7 @@ typedef struct _glbranch_context {
     glprograme bprg;
     gllocation bvloc_ver;
     gllocation bvloc_mat;
+    gllocation bfloc_cor;
 } glbranch_context;
 
 typedef struct _glbranch_obj {
@@ -101,7 +102,8 @@ typedef struct _glbranch_obj {
 } glbranch_obj;
 
 typedef struct _glbranch {
-    glfloat r;
+    glfloat rx;
+    glfloat ry;
     glfloat wmax;
     glfloat wmin;
     glangle al;
@@ -109,8 +111,7 @@ typedef struct _glbranch {
     glangle ar;
 } glbranch;
 
-void glinit_flower_context();
-void glinit_branch_context();
-void glrender_flower_context();
+void glinit_tree_context();
+void glrender_tree_context();
 
 #endif //__GLFLOWER_H__
