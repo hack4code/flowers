@@ -570,8 +570,8 @@ glrender_flower_context() {
     set_flower_obj(&fo, &f);
 
     gldraw_branch(&g_bo);
-//    gldraw_petal(&fo);
-//    gldraw_center(&fo);   
+    gldraw_petal(&fo);
+    gldraw_center(&fo);   
 }
 
 void
