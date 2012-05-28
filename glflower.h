@@ -107,7 +107,9 @@ typedef struct _glbranch {
     glfloat wmin;
     glangle al;
     glfloat z;
+
     glangle ar;
+    glvec3 p;
 } glbranch;
 
 void glinit_tree_context();

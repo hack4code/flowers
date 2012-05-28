@@ -25,6 +25,7 @@
 #pragma comment(lib, "glew32.lib")
 #endif //_WIN32
 
+#define GF = (0.618f)
 #define STEP 30
 #define BRANCH_STEP 5
 
@@ -357,10 +358,9 @@ create_branch_obj(glbranch_obj * bo, glbranch * b) {
     vec = NULL;
 
     glset_identify_mat4(&m_m);
-    glrotatez_mat4(&m_m, b->ar);
 
     glset_identify_mat4(&m_t);
-    glrotatez_mat4(&m_t, 180);
+    glrotatez_mat4(&m_t, 180+b->ar);
     glmutiply_mat4(&m_m, &m_t);
 
     v.x = 2.0f/g_screen_width;
@@ -394,6 +394,44 @@ create_branch() {
 	b.z = 0.6f;
 
 	create_branch_obj(&g_bo, &b);
+}
+
+size_t get_astop(glbranch * b) {
+    return (b->al * GF)/BRANCH_STEP + 1;
+}
+
+static void
+get_p(glvec3 * v, glbranch * b, glangle a) {
+    glfloat rx = b->rx;
+    glfloat ry = b->ry;
+    glfloat cx = rx * (glfloat)sin(glang_transform(b->al/2));
+    glfloat cy = ry * (glfloat)cos(glang_transform(b->al/2));
+    glfloat fa = glang_transform(a);
+
+    v->x = cx + rx * cos(fa);
+    v->y = cy + ry * sin(fa);
+    v->z = b->z;
+}
+
+static void
+generate_main_branch(glbranch * b, glbranch * bf) {
+    glvec3 p;
+    glfloat l;
+    glangle as = get_astop(bf) * BRANCH_STEP + 270 - bf->al/2;
+    glangle ra = bf->ra;
+    glfloat fa = glang_transform(ra);
+
+    b->ra = ra;
+    b->rx = bf->rx;
+    b->ry = bf->ry;
+    b->wmax = bf->wmin;
+    b->wmin = bf->wmin * bf->wmin / bf->bf->wmax;
+
+    get_p(&p, bf, as);
+    l = sqrt(p.x * p.x + p.y * p.y);
+    b->p.x = bf->p.x + l*cos(fa);
+    b->p.y = bf->p.y + l*sin(fa);
+    b->p.z = bf->p.z;
 }
 
 void
