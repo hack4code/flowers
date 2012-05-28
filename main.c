@@ -42,12 +42,14 @@ int main( void ) {
 	glinit_tree_context();
 
     while(running) {
-        glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
         glEnable(GL_POLYGON_SMOOTH);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glClearDepth(1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable( GL_BLEND );
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glrender_tree_context();
         glfwSwapBuffers();
@@ -74,7 +76,7 @@ render(void) {
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable( GL_BLEND );
+	glEnable(GL_BLEND);
 	glClearColor(1.0, 1.0, 1.0, 1.0);
     glrender_tree_context();
     glutSwapBuffers();

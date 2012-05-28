@@ -95,7 +95,6 @@ typedef struct _glbranch_context {
 } glbranch_context;
 
 typedef struct _glbranch_obj {
-    glvao bvao;
     glvbo bvbo;
     size_t bbsize;
     glmat4 m;

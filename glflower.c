@@ -352,15 +352,9 @@ create_branch_obj(glbranch_obj * bo, glbranch * b) {
     glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
     glBufferData(GL_ARRAY_BUFFER, bo->bbsize*sizeof(glfloat), glget_vector_array(vec), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	glfree_vector(vec);
     vec = NULL;
-
-    glGenVertexArrays(1, &(bo->bvao));
-    glBindVertexArray(bo->bvao);
-    glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
-    glVertexAttribPointer(gbcontext.bvloc_ver, 3, GL_FLOAT, GL_FALSE, 3*sizeof(glfloat), 0);
-	glEnableVertexAttribArray(gbcontext.bvloc_ver);
-    glBindVertexArray(0);
 
     glset_identify_mat4(&m_m);
     glrotatez_mat4(&m_m, b->ar);
@@ -397,7 +391,7 @@ create_branch() {
     b.ry = 80;
 	b.wmax = 20;
 	b.wmin = 10;
-	b.z = 0;
+	b.z = 0.6f;
 
 	create_branch_obj(&g_bo, &b);
 }
@@ -543,9 +537,10 @@ gldraw_branch(glbranch_obj * bo) {
     glUniformMatrix4fv(gbcontext.bvloc_mat, 1, true,  glget_mat4_array(&(bo->m)));
     glUniform3fv(gbcontext.bfloc_cor, 1, (const glfloat *)g_branch_color);
 
-    glBindVertexArray(bo->bvao);
+    glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
+    glVertexAttribPointer(gbcontext.bvloc_ver, 3, GL_FLOAT, GL_FALSE, 3*sizeof(glfloat), 0);
+	glEnableVertexAttribArray(gbcontext.bvloc_ver);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, bo->bbsize-2);
-	//glDrawArrays(GL_LINE_STRIP_ADJACENCY, 0, bo->bbsize);
 
     glBindVertexArray(0);
 	glUseProgram(0);
@@ -562,7 +557,7 @@ glrender_flower_context() {
     f.sc = 10.0f;
     f.p.x = 50.0f;
     f.p.y = 50.0f;
-    f.p.z = 0.0f;
+    f.p.z = 0.5f;
     f.cf = 0;
     f.a = 30;
 
