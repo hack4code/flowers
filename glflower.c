@@ -26,7 +26,7 @@
 #endif //_WIN32
 
 #define STEP 30
-#define BRANCH_STEP 1
+#define BRANCH_STEP 5
 
 static const glfloat g_petal_depth = 0.0f;
 static const glfloat g_center_depth = -0.01f;
@@ -308,25 +308,24 @@ glinit_flower_context() {
 
 static void 
 push_branch(glvector * * v, glbranch * b, unsigned int step) {
-    double rx = b->rx;
-    double ry = b->ry;
-    double max = b->wmax;
-    double min = b->wmin;
+    glfloat rx = b->rx;
+    glfloat ry = b->ry;
+    glfloat max = b->wmax;
+    glfloat min = b->wmin;
     unsigned int ns = b->al/step;
-    double ws = (max - min)/(2*ns);
-    double cx = rx * (glfloat)sin(glang_transform(b->al/2));
-    double cy = ry * (glfloat)cos(glang_transform(b->al/2));
+    glfloat ws = (max - min)/(2*ns);
+    glfloat cx = rx * (glfloat)sin(glang_transform(b->al/2));
+    glfloat cy = ry * (glfloat)cos(glang_transform(b->al/2));
 
-    double x, y, r;
-    double fa;
+    glfloat fa;
     glvec3 p;
     unsigned int i;
 
     for (i = 0; i <= ns; ++i) {
         fa = glang_transform(270 - b->al/2 + i*step);
 
-        p.x = cx + (rx - 0.5f*max + i*ws)*cos(fa);
-        p.y = cy + (ry - 0.5f*max + i*ws)*sin(fa);
+        p.x = cx + (rx - 0.5f*max + i*ws)*(glfloat)cos(fa);
+        p.y = cy + (ry - 0.5f*max + i*ws)*(glfloat)sin(fa);
         p.z = b->z;
         glpush_vec3(v, &p);
 
@@ -347,7 +346,7 @@ create_branch_obj(glbranch_obj * bo, glbranch * b) {
     vec = glalloc_vector(0);
     push_branch(&vec, b, BRANCH_STEP);
     bo->bbsize = glget_vector_size(vec);
-	glprint_vector(vec);
+	//glprint_vector(vec);
     
     glGenBuffers(1, &(bo->bvbo));
     glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
@@ -392,12 +391,12 @@ static void
 create_branch() {
     glbranch b;
 
-	b.al = 90;
+	b.al = 120;
 	b.ar = 45;
-	b.rx = 300;
-    b.ry = 200;
+	b.rx = 200;
+    b.ry = 80;
 	b.wmax = 20;
-	b.wmin = 1;
+	b.wmin = 10;
 	b.z = 0;
 
 	create_branch_obj(&g_bo, &b);
