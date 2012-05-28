@@ -308,28 +308,30 @@ glinit_flower_context() {
 
 static void 
 push_branch(glvector * * v, glbranch * b, unsigned int step) {
-    glfloat rx = b->rx;
-    glfloat ry = b->ry;
-    glfloat max = b->wmax;
-    glfloat min = b->wmin;
+    double rx = b->rx;
+    double ry = b->ry;
+    double max = b->wmax;
+    double min = b->wmin;
     unsigned int ns = b->al/step;
-    glfloat ws = (max - min)/(ns << 1);
-    glfloat cx = rx * (glfloat)sin(glang_transform(b->al/2));
-    glfloat cy = ry * (glfloat)cos(glang_transform(b->al/2));
+    double ws = (max - min)/(2*ns);
+    double cx = rx * (glfloat)sin(glang_transform(b->al/2));
+    double cy = ry * (glfloat)cos(glang_transform(b->al/2));
 
-    glfloat fa;
+    double x, y, r;
+    double fa;
     glvec3 p;
     unsigned int i;
 
     for (i = 0; i <= ns; ++i) {
         fa = glang_transform(270 - b->al/2 + i*step);
-        p.x = cx + (rx - max + i*ws) * (glfloat)cos(fa);
-        p.y = cy + (ry - max + i*ws) * (glfloat)sin(fa);
+
+        p.x = cx + (rx - 0.5f*max + i*ws)*cos(fa);
+        p.y = cy + (ry - 0.5f*max + i*ws)*sin(fa);
         p.z = b->z;
         glpush_vec3(v, &p);
 
-        p.x = cx + (rx + max - i*ws) * (glfloat)cos(fa);
-        p.y = cy + (ry + max - i*ws) * (glfloat)sin(fa);
+        p.x = cx + (rx + 0.5f*max - i*ws)*(glfloat)cos(fa);
+        p.y = cy + (ry + 0.5f*max - i*ws)*(glfloat)sin(fa);
         p.z = b->z;
         glpush_vec3(v, &p);
     }
@@ -345,7 +347,7 @@ create_branch_obj(glbranch_obj * bo, glbranch * b) {
     vec = glalloc_vector(0);
     push_branch(&vec, b, BRANCH_STEP);
     bo->bbsize = glget_vector_size(vec);
-//	glprint_vector(vec);
+	glprint_vector(vec);
     
     glGenBuffers(1, &(bo->bvbo));
     glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
@@ -390,12 +392,12 @@ static void
 create_branch() {
     glbranch b;
 
-	b.al = 120;
-	b.ar = 30;
-	b.rx = 200;
-    b.ry = 100;
-	b.wmax = 12;
-	b.wmin = 2;
+	b.al = 90;
+	b.ar = 45;
+	b.rx = 300;
+    b.ry = 200;
+	b.wmax = 20;
+	b.wmin = 1;
 	b.z = 0;
 
 	create_branch_obj(&g_bo, &b);
@@ -544,6 +546,7 @@ gldraw_branch(glbranch_obj * bo) {
 
     glBindVertexArray(bo->bvao);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, bo->bbsize-2);
+	//glDrawArrays(GL_LINE_STRIP_ADJACENCY, 0, bo->bbsize);
 
     glBindVertexArray(0);
 	glUseProgram(0);
