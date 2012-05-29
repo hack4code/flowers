@@ -107,6 +107,7 @@ typedef struct _glbranch {
     glfloat z;
 
 	bool isflip;
+    bool ismain;
     glangle ar;
     glvec3 p;
 } glbranch;
