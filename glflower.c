@@ -25,7 +25,7 @@
 #pragma comment(lib, "glew32.lib")
 #endif //_WIN32
 
-#define GF = (0.618f)
+#define GF (0.618f)
 #define STEP 30
 #define BRANCH_STEP 5
 
@@ -315,25 +315,36 @@ push_branch(glvector * * v, glbranch * b, unsigned int step) {
     glfloat min = b->wmin;
     unsigned int ns = b->al/step;
     glfloat ws = (max - min)/(2*ns);
-    glfloat cx = rx * (glfloat)sin(glang_transform(b->al/2));
-    glfloat cy = ry * (glfloat)cos(glang_transform(b->al/2));
+    glfloat cx, cy;
 
     glfloat fa;
-    glvec3 p;
+    glvec3 p1, p2;
     unsigned int i;
 
+	cx = rx * (glfloat)sin(glang_transform(b->al/2));
+	cy = ry * (glfloat)cos(glang_transform(b->al/2));
+
     for (i = 0; i <= ns; ++i) {
-        fa = glang_transform(270 - b->al/2 + i*step);
+		fa = glang_transform(270 - b->al/2 + i*step);
 
-        p.x = cx + (rx - 0.5f*max + i*ws)*(glfloat)cos(fa);
-        p.y = cy + (ry - 0.5f*max + i*ws)*(glfloat)sin(fa);
-        p.z = b->z;
-        glpush_vec3(v, &p);
+        p1.x = cx + (rx - 0.5f*max + i*ws)*(glfloat)cos(fa);
+        p1.y = cy + (ry - 0.5f*max + i*ws)*(glfloat)sin(fa);
+        p1.z = b->z;
 
-        p.x = cx + (rx + 0.5f*max - i*ws)*(glfloat)cos(fa);
-        p.y = cy + (ry + 0.5f*max - i*ws)*(glfloat)sin(fa);
-        p.z = b->z;
-        glpush_vec3(v, &p);
+        p2.x = cx + (rx + 0.5f*max - i*ws)*(glfloat)cos(fa);
+        p2.y = cy + (ry + 0.5f*max - i*ws)*(glfloat)sin(fa);
+        p2.z = b->z;
+
+		if (b->isflip) {
+			p2.y = -p2.y;
+			p1.y = -p1.y;
+			glpush_vec3(v, &p2);
+			glpush_vec3(v, &p1);
+		}
+		else {
+			glpush_vec3(v, &p1);
+			glpush_vec3(v, &p2);
+		}
     }
 }
 
@@ -363,6 +374,13 @@ create_branch_obj(glbranch_obj * bo, glbranch * b) {
     glrotatez_mat4(&m_t, 180+b->ar);
     glmutiply_mat4(&m_m, &m_t);
 
+    glset_identify_mat4(&m_t);
+    v.x = -b->p.x;
+    v.y = -b->p.y;
+    v.z = 0;
+    glmove_mat4(&m_t, &v);
+    glmutiply_mat4(&m_m, &m_t);
+
     v.x = 2.0f/g_screen_width;
     v.y = 2.0f/g_screen_height;
     v.z = 1.0f;
@@ -380,24 +398,23 @@ create_branch_obj(glbranch_obj * bo, glbranch * b) {
     glassign_mat4(&(bo->m), &m_m);
 }
 
-static 	glbranch_obj g_bo;
-static void
-create_branch() {
-    glbranch b;
 
-	b.al = 120;
-	b.ar = 45;
-	b.rx = 200;
-    b.ry = 80;
-	b.wmax = 20;
-	b.wmin = 10;
-	b.z = 0.6f;
-
-	create_branch_obj(&g_bo, &b);
-}
 
 size_t get_astop(glbranch * b) {
-    return (b->al * GF)/BRANCH_STEP + 1;
+    return (size_t)((b->al * GF)/BRANCH_STEP) + 1;
+}
+
+static glfloat
+get_slope(glbranch * b, glangle a) {
+    glfloat fa = glang_transform(a);
+	glfloat s = b->ry/b->rx * (glfloat)tan(fa);
+	return (s > 0.0f)?s:-s;
+}
+
+static glangle
+get_ar(glbranch * b, glfloat s) {
+    double fa = PI - 2*atan(s);
+    return (size_t)((glfloat)(fa/PI)*180.0f/BRANCH_STEP + 1) * BRANCH_STEP;
 }
 
 static void
@@ -408,30 +425,57 @@ get_p(glvec3 * v, glbranch * b, glangle a) {
     glfloat cy = ry * (glfloat)cos(glang_transform(b->al/2));
     glfloat fa = glang_transform(a);
 
-    v->x = cx + rx * cos(fa);
-    v->y = cy + ry * sin(fa);
+    v->x = cx + rx * (glfloat)cos(fa);
+    v->y = cy + ry * (glfloat)sin(fa);
     v->z = b->z;
 }
 
 static void
 generate_main_branch(glbranch * b, glbranch * bf) {
     glvec3 p;
-    glfloat l;
     glangle as = get_astop(bf) * BRANCH_STEP + 270 - bf->al/2;
-    glangle ra = bf->ra;
-    glfloat fa = glang_transform(ra);
+    glfloat s = get_slope(bf, as);
+    glangle ar = bf->ar;
+    glfloat fa = glang_transform(ar);
 
-    b->ra = ra;
+    b->ar = ar;
     b->rx = bf->rx;
     b->ry = bf->ry;
-    b->wmax = bf->wmin;
-    b->wmin = bf->wmin * bf->wmin / bf->bf->wmax;
+	b->wmax = bf->wmin + (bf->wmax - bf->wmin)*GF;
+    b->wmin = bf->wmin * bf->wmin / bf->wmax;
+    b->isflip = !bf->isflip;
+	b->z = bf->z;
 
     get_p(&p, bf, as);
-    l = sqrt(p.x * p.x + p.y * p.y);
-    b->p.x = bf->p.x + l*cos(fa);
-    b->p.y = bf->p.y + l*sin(fa);
-    b->p.z = bf->p.z;
+	b->p.x = bf->p.x + p.x * (glfloat)cos(fa) - p.y * (glfloat)sin(fa);
+	b->p.y = bf->p.y + p.x * (glfloat)sin(fa) + p.y * (glfloat)cos(fa);
+    b->p.z = 0;
+
+    b->al = get_ar(b, s);
+}
+
+static 	glbranch_obj g_bo;
+static 	glbranch_obj g_co;
+
+static void
+create_branch() {
+    glbranch b, c;
+
+	b.al = 120;
+	b.ar = 60;
+	b.rx = 200;
+    b.ry = 80;
+	b.wmax = 20;
+	b.wmin = 10;
+	b.z = 0.6f;
+    b.p.x = 20.0f;
+    b.p.y = 20.0f;
+    b.p.z = 0.0f;
+	b.isflip = false;
+
+    generate_main_branch(&c, &b);
+	create_branch_obj(&g_bo, &b);
+	create_branch_obj(&g_co, &c);
 }
 
 void
@@ -464,9 +508,6 @@ gldraw_petal(glflower_obj * pf) {
     glangle ang;
 
     glUseProgram(gfcontext.pprg.pid);
-
-    glGenVertexArrays(1, &(gfcontext.pvao));
-    glBindVertexArray(gfcontext.pvao);
 
     glBindBuffer(GL_ARRAY_BUFFER, gfcontext.pvbo);
     glVertexAttribPointer(gfcontext.pvloc_ver, 3, GL_FLOAT, GL_FALSE, 3*sizeof(glfloat), 0);
@@ -526,9 +567,6 @@ gldraw_center(glflower_obj * pf) {
     glUniform3fv(gfcontext.cfloc_rgc, 3, (const glfloat *)g_center_colors[pf->cf]);
     glUniform1fv(gfcontext.cfloc_rgs, 3, (const glfloat *)g_center_stop[pf->cf]);
 
-    glGenVertexArrays(1, &(gfcontext.cvao));
-    glBindVertexArray(gfcontext.cvao);
-
     glBindBuffer(GL_ARRAY_BUFFER, gfcontext.cvbo);
     glVertexAttribPointer(gfcontext.cvloc_ver, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(gfcontext.cvloc_ver);
@@ -578,9 +616,11 @@ gldraw_branch(glbranch_obj * bo) {
     glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
     glVertexAttribPointer(gbcontext.bvloc_ver, 3, GL_FLOAT, GL_FALSE, 3*sizeof(glfloat), 0);
 	glEnableVertexAttribArray(gbcontext.bvloc_ver);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, bo->bbsize-2);
 
-    glBindVertexArray(0);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, bo->bbsize/3*GF + 6);
+
+	glDisableVertexAttribArray(gbcontext.bvloc_ver);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glUseProgram(0);
 }
 
@@ -603,6 +643,7 @@ glrender_flower_context() {
     set_flower_obj(&fo, &f);
 
     gldraw_branch(&g_bo);
+	gldraw_branch(&g_co);
     gldraw_petal(&fo);
     gldraw_center(&fo);   
 }

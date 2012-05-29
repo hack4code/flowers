@@ -100,8 +100,7 @@ main(int argc, char** argv)
     }
 	//sversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
  //   fprintf(stdout, "glsl version = %s\n", sversion);
-	glinit_flower_context();
-	glinit_branch_context();
+	glinit_tree_context();
 
     glutMainLoop();
 
