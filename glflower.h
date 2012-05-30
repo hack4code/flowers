@@ -103,12 +103,12 @@ typedef struct _glbranch {
     glfloat ry;
     glfloat wmax;
     glfloat wmin;
-    glangle al;
+    glfloat al;
     glfloat z;
 
 	bool isflip;
     bool ismain;
-    glangle ar;
+    glfloat ar;
     glvec3 p;
 } glbranch;
 

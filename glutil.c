@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include "glutil.h"
 
-const double PI = 3.14159265358979323846;
+const glfloat PI = 3.14159265358979323846f;
 
 //vector function
 glvector * 
@@ -229,16 +229,20 @@ glscale_mat4(glmat4 * m, glvec3 * s) {
     m->vecs[10] *= s->z;
 }
 
-void
-glrotatez_mat4(glmat4 * m, glangle ang) {
-    glfloat a = glang_transform(ang);
-    glfloat sina = (glfloat) sin(a);
+void glrotatefz_mat4(glmat4 * m, glfloat a) {
+	glfloat sina = (glfloat) sin(a);
     glfloat cosa = (glfloat) cos(a);
 
     m->vecs[0] = cosa;
     m->vecs[1] = -sina;
     m->vecs[4] = sina;
     m->vecs[5] = cosa;
+}
+
+void
+glrotatez_mat4(glmat4 * m, glangle ang) {
+    glfloat a = glang_transform(ang);
+	glrotatefz_mat4(m, a);
 }
 
 void
