@@ -96,6 +96,7 @@ typedef struct _glbranch_obj {
     glvbo bvbo;
     size_t bbsize;
     glmat4 m;
+    struct _glbranch_obj * next;
 } glbranch_obj;
 
 typedef struct _glbranch {
@@ -110,6 +111,7 @@ typedef struct _glbranch {
     bool ismain;
     glfloat ar;
     glvec3 p;
+    struct _glbranch * next;
 } glbranch;
 
 void glinit_tree_context();

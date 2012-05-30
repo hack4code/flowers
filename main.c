@@ -34,7 +34,7 @@ int main( void ) {
     }
 
     // Open an OpenGL window
-    if( !glfwOpenWindow(1280, 800, 0,0,0,0,0,0, GLFW_WINDOW)) {
+    if( !glfwOpenWindow(800, 800, 0,0,0,0,0,0, GLFW_WINDOW)) {
         glfwTerminate();
         exit( EXIT_FAILURE );
     }
