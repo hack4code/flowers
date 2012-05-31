@@ -87,6 +87,7 @@ void glpush_vector(glvector * *, glfloat);
 void glpush_vec3(glvector * *, glvec3 *);
 void glpush_2vec3(glvector * *, glvec3 *, glvec3 *);
 void glprint_vector(glvector * v);
+void glappend_vector(glvector * *, glvector *);
 
 glprograme * glalloc_programe();
 bool glcreate_programe(glprograme *, const glchar *, const glchar *);

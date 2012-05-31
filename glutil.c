@@ -93,6 +93,29 @@ glpush_2vec3(glvector * * pv, glvec3 * pp1, glvec3 * pp2) {
 }
 
 void
+glappend_vector(glvector * * pv, glvector * v) {
+    glvector * t;
+    size_t sdst = (*pv)->size;
+    size_t ssrc = v->size;
+    size_t tdst = (*pv)->total;
+
+    size_t size = sdst + ssrc;
+
+    if (size*sizeof(glfloat) >= tdst) {
+        t = glalloc_vector(size*sizeof(glfloat));
+        t->size = sdst;
+        t->total = size*sizeof(glfloat);
+        memcpy(t->vec, (*pv)->vec, tdst);
+        glfree_vector(*pv);
+        *pv = t;
+        t = NULL;
+    }
+
+    memcpy((char *)((*pv)->vec) + sizeof(glfloat)*(*pv)->size, (char *)(v->vec), sizeof(glfloat)*v->size);
+    (*pv)->size = size;
+}
+
+void
 glprint_vector(glvector * v) {
     size_t i;
     for (i = 0; i < glget_vector_size(v); i += 3) {
