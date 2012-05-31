@@ -470,7 +470,7 @@ glcreate_main_branch_obj() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     g_main_branch_vec = vec;
-	glprint_vector(vec);
+	//glprint_vector(vec);
     vec = NULL;
 
     glset_identify_mat4(&m_m);
