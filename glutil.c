@@ -360,6 +360,32 @@ glmutiply_mat4(glmat4 * destm, glmat4 * srcm) {
     dest[15] = a41*b14 + a42*b24 + a43*b34 + a44*b44;
 }
 
+void
+glmutiply_scale_mat4(glmat4 * m, glvec3 * v) {
+    static glmat4 mt;
+
+    glset_identify_mat4(&mt);
+    glscale_mat4(&mt, v);
+    glmutiply_mat4(m, &mt);
+}
+
+void
+glmutiply_rotatez_mat4(glmat4 * m, glfloat a) {
+    static glmat4 mt;
+
+    glset_identify_mat4(&mt);
+    glrotatefz_mat4(&mt, a);
+    glmutiply_mat4(m, &mt);
+}
+
+void glmutiply_move_mat4(glmat4 * m, glvec3 * v) {
+    static glmat4 mt;
+
+    glset_identify_mat4(&mt);
+    glmove_mat4(&mt, v);
+    glmutiply_mat4(m, &mt);
+}
+
 //
 glfloat glang_transform(unsigned int a) {
     return (glfloat)(a*PI/180.f);

@@ -28,6 +28,8 @@
 #define STEP 30
 #define BRANCH_STEP (2.0f/180.0f*PI)
 
+#define LENGTH(x,y) (sqrt(pow((x),2)+pow((y),2)))
+
 static const glfloat g_petal_depth = 0.0f;
 static const glfloat g_center_depth = -0.01f;
 
@@ -39,7 +41,6 @@ static glfloat g_screen_height = 800.0f;
 static glbranch * g_main_branchs = NULL;
 static glbranch * g_sub_branchs = NULL;
 static glbranch_obj * g_branch_objs = NULL;
-static glvector * g_main_branch_vec = NULL;
 
 //colors for center
 static glfloat g_center_colors[][9] = {
@@ -444,13 +445,12 @@ glpush_branch_obj(glbranch_obj * bo) {
 }
 
 static void
-glcreate_main_branch_obj() {
+glcreate_main_branch_obj(glvector * * pv) {
     glvector * vec = glalloc_vector(0);
     glbranch_obj * bo = glcreate_branch_obj();
     glbranch * tb;
     glvector * tv;
     glmat4 m_m;
-    glmat4 m_t;
     glvec3 v;
 
     for (tb = g_main_branchs; tb != NULL; tb = tb->next) {
@@ -469,29 +469,22 @@ glcreate_main_branch_obj() {
     glBufferData(GL_ARRAY_BUFFER, bo->bbsize*sizeof(glfloat), glget_vector_array(vec), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    g_main_branch_vec = vec;
-	//glprint_vector(vec);
+    *pv = vec;
     vec = NULL;
 
     glset_identify_mat4(&m_m);
 
-    glset_identify_mat4(&m_t);
-    glrotatefz_mat4(&m_t, PI);
-    glmutiply_mat4(&m_m, &m_t);
+    glmutiply_rotatez_mat4(&m_m, PI);
 
     v.x = 2.0f/g_screen_width;
     v.y = 2.0f/g_screen_height;
     v.z = 1.0f;
-    glset_identify_mat4(&m_t);
-	glscale_mat4(&m_t, &v);
-    glmutiply_mat4(&m_m, &m_t);
+    glmutiply_scale_mat4(&m_m, &v);
 
-    glset_identify_mat4(&m_t);
     v.x = 1.0f;
     v.y = 1.0f;
     v.z = 0.0f;
-    glmove_mat4(&m_t, &v);
-    glmutiply_mat4(&m_m, &m_t);
+    glmutiply_move_mat4(&m_m, &v);
 
     glassign_mat4(&(bo->m), &m_m);
 
@@ -503,13 +496,6 @@ static void
 glcreate_branch_objs() {
     glbranch * b;
     glbranch_obj * bo;
-
-    for (b = g_main_branchs; b != NULL; b = b->next) {
-        bo = glcreate_branch_obj();
-        set_branch_obj(bo, b);
-        glpush_branch_obj(bo);
-        bo = NULL;
-    }
 
     for (b = g_sub_branchs; b != NULL; b = b->next) {
         bo = glcreate_branch_obj();
@@ -589,12 +575,52 @@ generate_main_branch(glbranch * bf) {
     glpush_main_branch(b);
 }
 
+static glfloat
+get_width(glvector * vec, size_t i) {
+    glfloat * v = vec->vec;
+    glfloat x1 = v[i*6];
+    glfloat y1 = v[i*6+1];
+    glfloat x2 = v[i*6+3];
+    glfloat y2 = v[i*6+4];
+
+    return LENGTH(x2-x1, y2-y1);
+}
+
 static void
-generate_sub_branch(glbranch * b, unsigned int n) {
+get_center_p(glvector * vec, size_t i, glfloat * px, glfloat * py) {
+    glfloat * v = vec->vec;
+
+    *px = (v[i*6] + v[i*6+3])/2.0f;
+    *py = (v[i*6+1] + v[i*6+4])/2.0f;
+}
+
+static glfloat
+get_length(glvector * v, size_t i) {
+    glfloat x, y;
+
+    get_center_p(v, i, &x, &y);
+    return LENGTH(x,y);
+}
+
+static glfloat
+get_ratio(glvector * v, size_t i, glfloat len, glfloat a) {
+    glfloat x, y;
+
+    get_center_p(v, i, &x, &y);
+    glfloat l = LENGTH(x,y);
+    return l*cos(abs(atan(x/y)-a))/len;
+}
+
+static void
+create_sub_branchs(glvector * v, glfloat a) {
+    size_t n = glget_vector_size(v)/6;
+    glfloat l = get_length(v, n-1);
 }
 
 static void
 create_branch() {
+    glvector * v;
+
     g_main_branchs = glcreate_branch();
 
 	g_main_branchs->al = 120.0f/180.0f*PI;
@@ -613,7 +639,8 @@ create_branch() {
 	g_main_branchs->isflip = false;
 
     generate_main_branch(g_main_branchs);
-    glcreate_main_branch_obj();
+
+    glcreate_main_branch_obj(&v);
 }
 
 void
@@ -755,8 +782,8 @@ gldraw_branch(glbranch_obj * bo) {
     glVertexAttribPointer(gbcontext.bvloc_ver, 3, GL_FLOAT, GL_FALSE, 3*sizeof(glfloat), 0);
 	glEnableVertexAttribArray(gbcontext.bvloc_ver);
 
-	//glDrawArrays(GL_TRIANGLE_STRIP, 0, bo->bbsize/3);
-	glDrawArrays(GL_LINE_STRIP, 0, bo->bbsize/3);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, bo->bbsize/3);
+//	glDrawArrays(GL_LINE_STRIP, 0, bo->bbsize/3);
 
 	glDisableVertexAttribArray(gbcontext.bvloc_ver);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
