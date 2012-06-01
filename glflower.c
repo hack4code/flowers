@@ -28,7 +28,7 @@
 #define STEP 30
 #define BRANCH_STEP (2.0f/180.0f*PI)
 
-#define LENGTH(x,y) (sqrt(pow((x),2)+pow((y),2)))
+#define LENGTH(x,y) ((glfloat)(sqrt(pow((x),2)+pow((y),2))))
 
 static const glfloat g_petal_depth = 0.0f;
 static const glfloat g_center_depth = -0.01f;
@@ -604,11 +604,11 @@ get_length(glvector * v, size_t i) {
 
 static glfloat
 get_ratio(glvector * v, size_t i, glfloat len, glfloat a) {
-    glfloat x, y;
+    glfloat x, y, l;
 
     get_center_p(v, i, &x, &y);
-    glfloat l = LENGTH(x,y);
-    return l*cos(abs(atan(x/y)-a))/len;
+    l = LENGTH(x,y);
+    return l*(glfloat)cos(abs(atan(x/y)-a))/len;
 }
 
 static void
