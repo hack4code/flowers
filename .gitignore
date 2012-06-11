@@ -99,3 +99,4 @@ UpgradeLog*.XML
 #
 *.DS_Store
 *.a
+*.user
