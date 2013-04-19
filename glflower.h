@@ -46,9 +46,9 @@ typedef struct _glcircle {
 } glcircle;
 
 typedef struct _glflower_obj {
-    glangle fa;
-    glvec3 ps;
-    glvec3 cs;
+    glangle fa;                                 
+    glvec3 ps;                                 
+    glvec3 cs;                                
     glvec3 fm;
     glvec3 pm;
     glcolor_id cf;
@@ -77,12 +77,12 @@ typedef struct _glflower_context {
 } glflower_context;
 
 typedef struct _glflower {
-    glfloat sp;
-    glfloat sl;
-    glfloat sc;
-    glvec3 p;
-    glangle a;
-    glcolor_id cf;
+    glfloat sp;                                 /* scale for petal */
+    glfloat sl;                                 /* scale for len between petal and center */
+    glfloat sc;                                 /* scale for center */
+    glvec3 p;                                   /* position */
+    glangle a;                                  /* angle rotate */
+    glcolor_id cf;                              /* color id */
 } glflower;
 
 typedef struct _glbranch_context {

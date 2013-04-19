@@ -34,6 +34,12 @@
     #define false 0
 #endif //_WIN32
 
+#ifdef __linux__
+    #include <GL/gl.h>
+    typedef unsigned char bool;
+    #define true 1
+    #define false 0
+#endif //__linux__
 
 typedef GLfloat glfloat;
 typedef GLuint glpid;
