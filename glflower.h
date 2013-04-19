@@ -25,12 +25,11 @@ typedef glvec3 glcolor;
 typedef unsigned int glcolor_id;
 
 typedef struct _glarc {
-    glvec3 c;
-    glfloat r;
-    unsigned int from;
-    unsigned int to;
+    glvec3 c;                                   /* circle center */
+    glfloat r;                                  /*  */
+    unsigned int from;                          /* angle start */
+    unsigned int to;                            /* angle end */
 } glarc;
-
 
 typedef struct _glpetal {
     glfloat m;
@@ -83,6 +82,7 @@ typedef struct _glflower {
     glvec3 p;                                   /* position */
     glangle a;                                  /* angle rotate */
     glcolor_id cf;                              /* color id */
+    struct _glflower * next;
 } glflower;
 
 typedef struct _glbranch_context {

@@ -121,7 +121,7 @@ render(void) {
     glClear(GL_DEPTH_BUFFER_BIT);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glClearColor(1.0, 1.0, 1.0, 1.0);
     glrender_tree_context();
