@@ -15,7 +15,7 @@ $(EXE) : $(OBJS)
 	$(CC) $(CFLAGS) $(LFLAGS) $(OBJS) -o $(EXE) 
 
 objs/%.o : ../%.c
-	$(CC) $(CFLAGS) -O2 -c -o "$@" "$<" 
+	$(CC) $(CFLAGS) -O0 -g3 -c -o "$@" "$<" 
 	
 clean:
 	rm -rf $(EXE) objs/*

@@ -112,6 +112,8 @@ typedef struct _glbranch {
     glfloat ar;
     glvec3 p;
     struct _glbranch * next;
+
+    glvector * v;
 } glbranch;
 
 void glinit_tree_context();

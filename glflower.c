@@ -17,9 +17,9 @@
  */
 
 #include <math.h>
-#include <time.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include "glflower.h"
 
@@ -31,10 +31,16 @@
 #include <GL/glext.h>
 #endif //__linux__
 
+
+
+
 #define STEP 30
 #define BRANCH_STEP (2.0f/180.0f*PI)
 #define GOLDEN_RATIO 0.618f
 #define N_SUB_BRANCH 3
+
+#define MAX_FLOWER_R 30
+#define MIN_FLOWER_R 10
 
 #define LENGTH(x,y) ((glfloat)(sqrt(pow((x),2)+pow((y),2))))
 
@@ -541,15 +547,16 @@ set_branch_obj(glbranch_obj * bo, glbranch * b) {
     vec = glalloc_vector(0);
     push_branch(&vec, b, BRANCH_STEP);
     bo->bbsize = glget_vector_size(vec);
-	//glprint_vector(vec);
+//	glprint_vector(vec);
     
     glGenBuffers(1, &(bo->bvbo));
     glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
     glBufferData(GL_ARRAY_BUFFER, bo->bbsize*sizeof(glfloat), glget_vector_array(vec), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	glfree_vector(vec);
-    vec = NULL;
+    b->v = vec;
+//	glfree_vector(vec);
+//    vec = NULL;
 }
 
 /*
@@ -587,53 +594,6 @@ gldraw_branchs() {
 ////////////////////////////////////////////////
 //  branch and flower generate algorithm
 ////////////////////////////////////////////////
-
-/*
- * flower
- */
-
-static void
-glpush_flower(glflower * flo) {
-    flo->next = g_flowers;
-    g_flowers = flo;
-}
-
-static void
-glgenerate_flower(glfloat x, glfloat y) {
-    glflower * flo;
-
-    flo = glcreate_flower();
-    flo->sp = 15.0f;
-    flo->sl = 0.50f;
-    flo->sc = 5.0f;
-    flo->p.x = x;
-    flo->p.y = y;
-    flo->p.z = 0.0f;
-    flo->a = rand()%90;
-    flo->cf = 0.0f;
-
-    glpush_flower(flo);
-}
-
-static void
-glcreate_flower_objs() {
-    glflower * flo;
-    size_t i;
-    size_t n = 0;
-
-    for (flo = g_flowers; NULL != flo; flo = flo->next, ++n)
-        ;
-
-    g_n_flowers = n;
-    g_flower_objs = malloc(n * sizeof(*g_flower_objs));
-
-    for (i = 0, flo = g_flowers; i < n; ++i, flo = flo->next) 
-        set_flower_obj(&g_flower_objs[i], flo);
-}
-
-//
-//  main branch genetate algorithm
-//
 
 static glfloat
 get_slope(glbranch * b, glfloat a) {
@@ -677,6 +637,110 @@ get_center_p(glvector * vec, size_t i, glfloat * px, glfloat * py) {
     *py = (v[i*6+1] + v[i*6+4])/2.0f;
 }
 
+/*
+ *  move and rotate branch
+ */
+
+static void
+gltransform_branch(glvector * v, glbranch * b) {
+    size_t n = glget_vector_size(v);
+    glfloat * vec = v->vec;
+    glfloat mx = b->p.x;
+    glfloat my = b->p.y;
+    glfloat a = b->ar;
+    glfloat x, y;
+    size_t i;
+
+    for (i = 0; i < n; i += 3) {
+        x = vec[i];
+        y = vec[i+1];
+        vec[i]   = mx + x*(glfloat)cos(a) - y*(glfloat)sin(a);
+        vec[i+1] = my + x*(glfloat)sin(a) + y*(glfloat)cos(a);
+    }
+}
+
+/*
+ * flower
+ */
+
+static void
+glpush_flower(glflower * flo) {
+    flo->next = g_flowers;
+    g_flowers = flo;
+}
+
+static void
+glgenerate_flower(glfloat x, glfloat y) {
+    glflower * flo;
+
+    flo = glcreate_flower();
+    flo->sp = (glfloat)(MIN_FLOWER_R + rand()%(MAX_FLOWER_R-MIN_FLOWER_R));
+    flo->sl = 0.50f;
+    flo->sc = 5.0f;
+    flo->p.x = x;
+    flo->p.y = y;
+    flo->p.z = 0.0f;
+    flo->a = rand()%45;
+    flo->cf = 0.0f;
+
+    glpush_flower(flo);
+}
+
+static void
+glgenerate_branch_flowers(glbranch * b) {
+    glvector * v = b->v;
+    size_t n = glget_vector_size(v)/6 - 1;
+    glfloat x0, y0, x1, y1, fx, fy;
+    glfloat l;
+    size_t nf;
+    size_t i;
+    size_t step;
+
+    gltransform_branch(v, b);
+
+    get_center_p(v, 0, &x0, &y0);
+    get_center_p(v, n, &x1, &y1);
+
+    l = LENGTH(x1-x0, y1-y0);
+    nf = (size_t) (l/(4*MAX_FLOWER_R));
+    if (0 == nf)
+        nf = 1;
+    step = n / nf;
+
+    for (i = 0; i < nf; ++i) {
+        get_center_p(v, i * step, &fx, &fy);
+        glgenerate_flower(fx, fy);
+    }
+}
+
+static void
+glgenerate_branches_flowers() {
+    glbranch * b;
+
+    for (b = g_sub_branchs; b != NULL; b = b->next) 
+        glgenerate_branch_flowers(b);
+}
+
+static void
+glcreate_flower_objs() {
+    glflower * flo;
+    size_t n = 0;
+
+    for (flo = g_flowers; NULL != flo; flo = flo->next, ++n)
+        ;
+
+    g_n_flowers = n;
+    g_flower_objs = malloc(n * sizeof(*g_flower_objs));
+
+    for (n = 0, flo = g_flowers; n < g_n_flowers; ++n, flo = flo->next) 
+        set_flower_obj(&g_flower_objs[n], flo);
+}
+
+//
+//  main branch genetate algorithm
+//
+
+
 //static glfloat
 //get_length(glvector * v, size_t i) {
 //    glfloat x, y;
@@ -701,27 +765,6 @@ glpush_branch_obj(glbranch_obj * bo) {
     g_branch_objs = bo;
 }
 
-/*
- *  move and rotate second main branch
- */
-
-static void
-gltransform_branch(glvector * v, glbranch * b) {
-    size_t n = glget_vector_size(v);
-    glfloat * vec = v->vec;
-    glfloat mx = b->p.x;
-    glfloat my = b->p.y;
-    glfloat a = b->ar;
-    glfloat x, y;
-    size_t i;
-
-    for (i = 0; i < n; i += 3) {
-        x = vec[i];
-        y = vec[i+1];
-        vec[i]   = mx + x*(glfloat)cos(a) - y*(glfloat)sin(a);
-        vec[i+1] = my + x*(glfloat)sin(a) + y*(glfloat)cos(a);
-    }
-}
 
 
 static void
@@ -862,8 +905,8 @@ generate_sub_branch(glvector * v, glfloat rx, glfloat ry, glfloat al, glfloat ar
         b->rx = rx * pow(GOLDEN_RATIO, i);
         b->ry = ry * pow(GOLDEN_RATIO, i);
 
-        b->wmax = 0.90f * w;
-        b->wmin = b->wmax * GOLDEN_RATIO;
+        b->wmax = 0.80f * w;
+        b->wmin = b->wmax * (1.0f-GOLDEN_RATIO);
 
         b->z = 0.60f;
         b->p.x = x;
@@ -871,7 +914,6 @@ generate_sub_branch(glvector * v, glfloat rx, glfloat ry, glfloat al, glfloat ar
         b->p.z = 0.0f;
         b->isflip = false;
 
-        glgenerate_flower(x, y);
         glpush_sub_branch(b);
     }
 }
@@ -902,6 +944,7 @@ create_branch() {
 
     generate_sub_branch(v,g_main_branchs->rx, g_main_branchs->ry, g_main_branchs->al, g_main_branchs->ar);
     glcreate_sub_branch_objs();
+    glgenerate_branches_flowers();
     glcreate_flower_objs();
 }
 
