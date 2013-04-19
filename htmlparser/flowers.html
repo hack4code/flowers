@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>CSS3 Cherry Blossom</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta name="Description" content="CSS3 Cherry Blossom by elufo.com" />
+	<meta name="author" content="elufo.com" />
+	<link href='http://fonts.googleapis.com/css?family=Marck+Script' rel='stylesheet' type='text/css'>
+	<style type="text/css">
+	body{ margin:0; padding:0; }
+	#marco{ width:800px; height:580px; border:5px solid #e6e6e6; -moz-border-radius:50px 50px 0 50px; -webkit-border-radius:50px 50px 0 50px; -o-border-radius:50px 50px 0 50px; border-radius:50px 50px 0 50px; margin:20px auto; position:relative; overflow:hidden; -moz-box-shadow:5px 5px 5px 1px rgba(178, 178, 178, 1); -webkit-box-shadow:5px 5px 5px 1px rgba(178, 178, 178, 1); -o-box-shadow:5px 5px 5px 1px rgba(178, 178, 178, 1); box-shadow:5px 5px 5px 1px rgba(178, 178, 178, 1); -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }
+	@-moz-keyframes fade {		from { opacity:0; }		to { opacity:1; }	}
+	@-moz-keyframes fadeb {		from { opacity:0; }		to { opacity:1; }	}
+	@keyframes fade {		from { opacity:0; }		to { opacity:1; }	}
+	@keyframes fadeb {		from { opacity:0; }		to { opacity:1; }	}
+	
+	#textos{ text-align:right; font-family:"Marck Script"; font-size:20px; position:absolute; bottom:10px; right:20px; -moz-animation:fade 15s; animation:fade 15s; }
+	#textos p{ margin:0 0 5px 0; color:#959595; }
+	
+	#marco .flor div{ position:absolute; }
+	
+	.flor{ position:absolute; -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }
+		.centro{ background:-moz-radial-gradient(center, ellipse cover, #ffffcc 0%, #f5d1d3 30%, #ffffcc 80%); background:-webkit-radial-gradient(center, ellipse cover, #ffffcc 0%, #f5d1d3 30%, #ffffcc 80%); background:-o-linear-gradient(-45deg, #f5d1d3 40%, #ffffcc 90%); background:radial-gradient(center, ellipse cover, #ffffcc 0%, #f5d1d3 30%, #ffffcc 80%); -moz-border-radius:100px; -webkit-border-radius:100px; -o-border-radius:100px; border-radius:100px; top:50%; left:50%; -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; z-index:10; width:26%; height:26%; margin:-13% 0 0 -13%; }
+		.hoja{ -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; width:50%; height:50%; }
+		.h1{ background:-moz-linear-gradient(-45deg, #f0a6c7 40%, #b9334c 90%); background:-webkit-linear-gradient(-45deg, #f0a6c7 40%, #b9334c 90%); background:-o-linear-gradient(-45deg, #f0a6c7 40%, #b9334c 90%); background:linear-gradient(-45deg, #f0a6c7 40%, #b9334c 90%); -moz-border-radius:20px 10px 0 10px; -webkit-border-radius:20px 10px 0 10px; -o-border-radius:20px 10px 0 10px; border-radius:20px 10px 0 10px; top:0; left:0; }
+		.h2{ background:-moz-linear-gradient(-135deg, #f0a6c7 40%, #b9334c 90%); background:-webkit-linear-gradient(-135deg, #f0a6c7 40%, #b9334c 90%); background:-o-linear-gradient(-135deg, #f0a6c7 40%, #b9334c 90%); background:linear-gradient(-135deg, #f0a6c7 40%, #b9334c 90%); -moz-border-radius:10px 20px 10px 0px; -webkit-border-radius:10px 20px 10px 0px; -o-border-radius:10px 20px 10px 0px; border-radius:10px 20px 10px 0px; top:0; right:0; }
+		.h3{ background:-moz-linear-gradient(45deg, #f0a6c7 40%, #b9334c 90%); background:-webkit-linear-gradient(45deg, #f0a6c7 40%, #b9334c 90%); background:-o-linear-gradient(45deg, #f0a6c7 40%, #b9334c 90%); background:linear-gradient(45deg, #f0a6c7 40%, #b9334c 90%); -moz-border-radius:10px 0px 10px 20px; -webkit-border-radius:10px 0px 10px 20px; -o-border-radius:10px 0px 10px 20px; border-radius:10px 0px 10px 20px; bottom:0px; left:0px; }
+		.h4{ background:-moz-linear-gradient(135deg, #f0a6c7 40%, #b9334c 90%); background:-webkit-linear-gradient(135deg, #f0a6c7 40%, #b9334c 90%); background:-o-linear-gradient(135deg, #f0a6c7 40%, #b9334c 90%); background:linear-gradient(135deg, #f0a6c7 40%, #b9334c 90%); -moz-border-radius:0px 10px 20px 10px; -webkit-border-radius:0px 10px 20px 10px; -o-border-radius:0px 10px 20px 10px; border-radius:0px 10px 20px 10px; bottom:0px; right:0px; }
+
+/*flores*/	
+	.r1f1{ width:32px; height:32px; right:157px; top:44px; -moz-transform:rotate(10deg); -webkit-transform:rotate(10deg); -o-border-transform:rotate(10deg); border-transform:rotate(10deg); }
+	.r1f2{ width:42px; height:42px; right:265px; top:188px; -moz-transform:rotate(30deg); -webkit-transform:rotate(30deg); -o-border-transform:rotate(30deg); border-transform:rotate(30deg); }
+	.r1f3{ width:65px; height:65px; right:255px; top:112px; -moz-transform:rotate(110deg); -webkit-transform:rotate(110deg); -o-border-transform:rotate(110deg); border-transform:rotate(110deg); }
+	
+	.r2f1{ width:40px; height:40px; right:100px; top:238px; -moz-transform:rotate(20deg); -webkit-transform:rotate(20deg); -o-border-transform:rotate(20deg); border-transform:rotate(20deg); }
+	.r2f2{ width:65px; height:65px; right:130px; top:247px; -moz-transform:rotate(61deg); -webkit-transform:rotate(61deg); -o-border-transform:rotate(61deg); border-transform:rotate(61deg); }
+	.r2f3{ width:25px; height:25px; right:70px; top:217px; -moz-transform:rotate(160deg); -webkit-transform:rotate(160deg); -o-border-transform:rotate(160deg); border-transform:rotate(160deg); }
+	.r2f4{ width:50px; height:50px; right:-13px; top:90px; -moz-transform:rotate(11deg); -webkit-transform:rotate(11deg); -o-border-transform:rotate(11deg); border-transform:rotate(11deg); }
+	.r2f5{ width:68px; height:68px; right:16px; top:121px; -moz-transform:rotate(168deg); -webkit-transform:rotate(168deg); -o-border-transform:rotate(168deg); border-transform:rotate(168deg); }
+
+	.r21f1{ width:55px; height:55px; right:140px; top:66px; -moz-transform:rotate(77deg); -webkit-transform:rotate(77deg); -o-border-transform:rotate(77deg); border-transform:rotate(77deg); }
+	.r21f2{ width:30px; height:30px; right:180px; top:137px; -moz-transform:rotate(61deg); -webkit-transform:rotate(61deg); -o-border-transform:rotate(61deg); border-transform:rotate(61deg); }
+	.r21f3{ width:20px; height:20px; right:188px; top:175px; -moz-transform:rotate(20deg); -webkit-transform:rotate(20deg); -o-border-transform:rotate(20deg); border-transform:rotate(20deg); }
+	.r21f4{ width:35px; height:35px; right:3px; top:30px; -moz-transform:rotate(70deg); -webkit-transform:rotate(70deg); -o-border-transform:rotate(70deg); border-transform:rotate(70deg); }
+	
+	.r22f1{ width:55px; height:55px; right:-23px; top:24px; -moz-transform:rotate(46deg); -webkit-transform:rotate(46deg); -o-border-transform:rotate(46deg); border-transform:rotate(46deg); }
+	.r22f2{ width:35px; height:35px; right:16px; top:77px; -moz-transform:rotate(22deg); -webkit-transform:rotate(22deg); -o-border-transform:rotate(22deg); border-transform:rotate(22deg); }
+	.r22f3{ width:40px; height:40px; right:90px; top:124px; -moz-transform:rotate(0deg); -webkit-transform:rotate(0deg); -o-border-transform:rotate(0deg); border-transform:rotate(0deg); }
+	.r22f4{ width:20px; height:20px; right:136px; top:138px; -moz-transform:rotate(10deg); -webkit-transform:rotate(10deg); -o-border-transform:rotate(10deg); border-transform:rotate(10deg); }
+	
+	.r23f1{ width:25px; height:25px; right:19px; top:-15px; -moz-transform:rotate(46deg); -webkit-transform:rotate(46deg); -o-border-transform:rotate(46deg); border-transform:rotate(46deg); }
+	.r23f2{ width:45px; height:45px; right:44px; top:0px; -moz-transform:rotate(22deg); -webkit-transform:rotate(22deg); -o-border-transform:rotate(22deg); border-transform:rotate(22deg); }
+	.r23f3{ width:50px; height:50px; right:76px; top:45px; -moz-transform:rotate(72deg); -webkit-transform:rotate(72deg); -o-border-transform:rotate(72deg); border-transform:rotate(72deg); }
+	.r23f4{ width:25px; height:25px; right:91px; top:104px; -moz-transform:rotate(40deg); -webkit-transform:rotate(40deg); -o-border-transform:rotate(40deg); border-transform:rotate(40deg); }
+	
+	.r3f1{ width:36px; height:36px; right:-1px; top:-31px; -moz-transform:rotate(115deg); -webkit-transform:rotate(115deg); -o-border-transform:rotate(115deg); border-transform:rotate(115deg); }
+	.r3f2{ width:56px; height:56px; right:29px; top:-25px; -moz-transform:rotate(5deg); -webkit-transform:rotate(5deg); -o-border-transform:rotate(5deg); border-transform:rotate(5deg); }
+	.r3f3{ width:20px; height:20px; right:84px; top:27px; -moz-transform:rotate(110deg); -webkit-transform:rotate(110deg); -o-border-transform:rotate(110deg); border-transform:rotate(110deg); }
+	.r3f4{ width:43px; height:43px; right:115px; top:60px; -moz-transform:rotate(15deg); -webkit-transform:rotate(15deg); -o-border-transform:rotate(15deg); border-transform:rotate(15deg); }
+	.r3f5{ width:60px; height:60px; right:113px; top:103px; -moz-transform:rotate(45deg); -webkit-transform:rotate(45deg); -o-border-transform:rotate(45deg); border-transform:rotate(45deg); }
+	
+	.r4f1{ width:20px; height:20px; right:49px; top:72px; -moz-transform:rotate(5deg); -webkit-transform:rotate(5deg); -o-border-transform:rotate(5deg); border-transform:rotate(5deg); }
+	.r4f2{ width:46px; height:46px; right:9px; top:48px; -moz-transform:rotate(78deg); -webkit-transform:rotate(78deg); -o-border-transform:rotate(78deg); border-transform:rotate(78deg); }
+	.r4f3{ width:35px; height:35px; right:-13px; top:58px; -moz-transform:rotate(80deg); -webkit-transform:rotate(80deg); -o-border-transform:rotate(80deg); border-transform:rotate(80deg); }
+	.r4f4{ width:55px; height:55px; right:5px; top:83px; -moz-transform:rotate(44deg); -webkit-transform:rotate(44deg); -o-border-transform:rotate(44deg); border-transform:rotate(44deg); }
+/* Ramas */
+	.rama5 .flor{ width:50px; height:50px; right:16px; top:16px; -moz-transform:rotate(70deg); -webkit-transform:rotate(70deg); -o-border-transform:rotate(70deg); border-transform:rotate(70deg); }
+	
+	.rama1{ border:30px solid #2b0d0d; border-width:20px 0 0 10px; -moz-border-radius:400px 0px 0px 0px; -webkit-border-radius:400px 0px 0px 0px; -o-border-radius:400px 0px 0px 0px; border-radius:400px 0px 0px 0px; right:-100px; top:0px; width:300px; height:300px; position:absolute; -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }
+		.rama2{ border:30px solid #2b0d0d; border-width:0px 12px 7px 0px; -moz-border-radius:0px 0px 300px 0px; -webkit-border-radius:0px 0px 300px 0px; -o-border-radius:0px 0px 300px 0px; border-radius:0px 0px 300px 0px; right:326px; top:21px; width:250px; height:300px; position:absolute; -moz-transform:rotate(40deg); -webkit-transform:rotate(40deg); -o-transform:rotate(40deg); transform:rotate(40deg); -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }
+			.rama21{ border:30px solid #2b0d0d; border-width:10px 0px 0px 2px; -moz-border-radius:300px 0px 0px 0px; -webkit-border-radius:300px 0px 0px 0px; -o-border-radius:300px 0px 0px 0px; border-radius:300px 0px 0px 0px; right:-98px; top:166px; width:200px; height:220px; position:absolute; -moz-transform:rotate(-45deg); -webkit-transform:rotate(-45deg); -o-transform:rotate(-45deg); transform:rotate(-45deg); -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }
+				.rama211{ border:30px solid #2b0d0d; border-width:0px 5px 3px 0px; -moz-border-radius:0px 0px 200px 0px; -webkit-border-radius:0px 0px 200px 0px; -o-border-radius:0px 0px 200px 0px; border-radius:0px 0px 200px 0px; right:196px; top:65px; width:90px; height:80px; position:absolute; -moz-transform:rotate(45deg); -webkit-transform:rotate(45deg); -o-transform:rotate(45deg); transform:rotate(45deg); -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }
+			.rama22{ border:30px solid #2b0d0d; border-width:0px 8px 2px 0px; -moz-border-radius:0px 0px 200px 0px; -webkit-border-radius:0px 0px 200px 0px; -o-border-radius:0px 0px 200px 0px; border-radius:0px 0px 200px 0px; right:172px; top:312px; width:180px; height:150px; position:absolute; -moz-transform:rotate(-12deg); -webkit-transform:rotate(-12deg); -o-transform:rotate(-12deg); transform:rotate(-12deg); -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }
+			.rama23{ border:30px solid #2b0d0d; border-width:4px 0px 0px 2px; -moz-border-radius:200px 0px 0px 0px; -webkit-border-radius:200px 0px 0px 0px; -o-border-radius:200px 0px 0px 0px; border-radius:200px 0px 0px 0px; right:245px; top:261px; width:100px; height:140px; position:absolute; -moz-transform:rotate(34deg); -webkit-transform:rotate(34deg); -o-transform:rotate(34deg); transform:rotate(34deg); -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }
+		.rama3{ border:30px solid #2b0d0d; border-width:10px 0px 0px 4px; -moz-border-radius:300px 0px 0px 0px; -webkit-border-radius:300px 0px 0px 0px; -o-border-radius:300px 0px 0px 0px; border-radius:300px 0px 0px 0px; right:315px; top:84px; width:150px; height:180px; position:absolute; -moz-transform:rotate(38deg); -webkit-transform:rotate(38deg); -o-transform:rotate(38deg); transform:rotate(38deg); -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }
+			.rama31{ border:30px solid #2b0d0d; border-width:5px 0px 0px 3px; -moz-border-radius:200px 0px 0px 0px; -webkit-border-radius:200px 0px 0px 0px; -o-border-radius:200px 0px 0px 0px; border-radius:200px 0px 0px 0px; right:113px; top:20px; width:120px; height:120px; position:absolute; -moz-transform:rotate(11deg); -webkit-transform:rotate(11deg); -o-transform:rotate(11deg); transform:rotate(11deg); -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }
+		.rama4{ border:30px solid #2b0d0d; border-width:0px 10px 4px 0px; -moz-border-radius:0px 0px 300px 0px; -webkit-border-radius:0px 0px 300px 0px; -o-border-radius:0px 0px 300px 0px; border-radius:0px 0px 300px 0px; right:316px; top:231px; width:120px; height:160px; position:absolute; -moz-transform:rotate(15deg); -webkit-transform:rotate(15deg); -o-transform:rotate(15deg); transform:rotate(15deg); -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }
+			.rama41{ border:30px solid #2b0d0d; border-width:0px 5px 3px 0px; -moz-border-radius:0px 0px 200px 0px; -webkit-border-radius:0px 0px 200px 0px; -o-border-radius:0px 0px 200px 0px; border-radius:0px 0px 200px 0px; right:-35px; top:97px; width:100px; height:80px; position:absolute; -moz-transform:rotate(-39deg); -webkit-transform:rotate(-39deg); -o-transform:rotate(-39deg); transform:rotate(-39deg); -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }	
+		.rama5{ border:30px solid #2b0d0d; border-width:0px 0px 10px 4px; -moz-border-radius:0px 0px 0px 200px; -webkit-border-radius:0px 0px 0px 200px; -o-border-radius:0px 0px 0px 200px; border-radius:0px 0px 0px 200px; right:192px; top:14px; width:40px; height:40px; position:absolute; -moz-transform:rotate(-23deg); -webkit-transform:rotate(-23deg); -o-transform:rotate(-23deg); transform:rotate(-23deg); -moz-transition:all 3s ease-out; -webkit-transition:all 3s ease-out; -o-transition:all 3s ease-out; transition:all 3s ease-out; }
+/*Media Qs*/
+	@media screen and (max-width: 850px) { 
+	#marco{ width:480px; height:350px; -moz-border-radius:0 50px 50px 50px; -webkit-border-radius:0 50px 50px 50px; -o-border-radius:0 50px 50px 50px; border-radius:0 50px 50px 50px; }
+	#textos{ text-align:left; font-size:16px; top:10px; left:20px; right:auto; bottom:auto; -moz-animation:fadeb 15s; animation:fade 15s; }
+	#textos p{ margin:0 0 3px 0; }
+	
+	
+		.rama1{ width:200px; height:200px; border-width:17px 0px 0px 7px; border-color: #5d2f00; }
+		.rama2{ right:209px; top:21px; width:150px; height:170px; border-width:0px 9px 5px 0px; border-color: #5d2f00; }
+			.rama21{ border-width:6px 0px 0px 2px; right:-26px; top:71px; width:50px; height:60px; border-color: #5d2f00; }
+				.rama211{ border-width:0px 2px 1px 0px; right:49px; top:30px; width:5px; height:5px; -moz-transform:rotate(27deg); -webkit-transform:rotate(27deg); -o-border-transform:rotate(27deg); border-transform:rotate(27deg); border-color:#5d2f00; }
+			.rama22{ border-width:0px 5px 2px 0px; right:90px; top:166px; width:30px; height:35px; border-color: #5d2f00; }
+			.rama23{ border-width:2px 0px 0px 1px; right:139px; top:168px; width:5px; height:5px; border-color: #5d2f00; }
+		.rama3{ border-width:6px 0px 0px 2px; right:187px; top:79px; width:30px; height:30px; border-color: #5d2f00; }
+			.rama31{ border-width:3px 0px 0px 1px; right:22px; top:3px; width:1px; height:2px; border-color: #5d2f00; }
+		.rama4{ border-width:0px 5px 2px 0px; right:203px; top:165px; width:30px; height:30px; border-color: #5d2f00; }
+			.rama41{ border-width:0px 2px 1px 0px; right:0px; top:18px; width:2px; height:4px; border-color: #5d2f00; }	
+		.rama5{ border-width:0px 0px 5px 2px; right:119px; top:14px; width:10px; height:10px; border-color: #5d2f00; }
+/*flores*/		
+		.r1f1{ width:2px; height:2px; right:108px; top:27px; -moz-transform:rotate(100deg); -webkit-transform:rotate(100deg); -o-border-transform:rotate(100deg); border-transform:rotate(100deg); }
+		.r1f2{ width:12px; height:12px; right:181px; top:120px; -moz-transform:rotate(130deg); -webkit-transform:rotate(130deg); -o-border-transform:rotate(130deg); border-transform:rotate(130deg); }
+		.r1f3{ width:25px; height:25px; right:172px; top:82px; -moz-transform:rotate(10deg); -webkit-transform:rotate(10deg); -o-border-transform:rotate(10deg); border-transform:rotate(10deg); }
+
+		.r2f1{ width:10px; height:10px; right:60px; top:138px; -moz-transform:rotate(120deg); -webkit-transform:rotate(120deg); -o-border-transform:rotate(120deg); border-transform:rotate(120deg); }
+		.r2f2{ width:25px; height:25px; right:74px; top:144px; -moz-transform:rotate(261deg); -webkit-transform:rotate(261deg); -o-border-transform:rotate(261deg); border-transform:rotate(261deg); }
+		.r2f3{ width:5px; height:5px; right:27px; top:106px; -moz-transform:rotate(10deg); -webkit-transform:rotate(10deg); -o-border-transform:rotate(10deg); border-transform:rotate(10deg); }
+		.r2f4{ width:10px; height:10px; right:0px; top:53px; -moz-transform:rotate(211deg); -webkit-transform:rotate(211deg); -o-border-transform:rotate(211deg); border-transform:rotate(211deg); }
+		.r2f5{ width:35px; height:35px; right:-2px; top:62px; -moz-transform:rotate(268deg); -webkit-transform:rotate(268deg); -o-border-transform:rotate(268deg); border-transform:rotate(268deg); }
+		
+		.r21f1{ width:10px; height:10px; right:43px; top:28px; -moz-transform:rotate(177deg); -webkit-transform:rotate(177deg); -o-border-transform:rotate(177deg); border-transform:rotate(177deg); }
+		.r21f2{ width:2px; height:2px; right:51px; top:47px; -moz-transform:rotate(161deg); -webkit-transform:rotate(161deg); -o-border-transform:rotate(161deg); border-transform:rotate(161deg); }
+		.r21f3{ width:4px; height:4px; right:49px; top:50px; -moz-transform:rotate(120deg); -webkit-transform:rotate(120deg); -o-border-transform:rotate(120deg); border-transform:rotate(120deg); }
+		.r21f4{ width:2px; height:2px; right:-1px; top:4px; -moz-transform:rotate(0deg); -webkit-transform:rotate(0deg); -o-border-transform:rotate(0deg); border-transform:rotate(0deg); }
+	
+		.r22f1{ width:15px; height:15px; right:-6px; top:5px; -moz-transform:rotate(146deg); -webkit-transform:rotate(146deg); -o-border-transform:rotate(146deg); border-transform:rotate(146deg); }
+		.r22f2{ width:2px; height:2px; right:6px; top:24px; -moz-transform:rotate(100deg); -webkit-transform:rotate(100deg); -o-border-transform:rotate(100deg); border-transform:rotate(100deg); }
+		.r22f3{ width:5px; height:5px; right:16px; top:31px; -moz-transform:rotate(215deg); -webkit-transform:rotate(215deg); -o-border-transform:rotate(215deg); border-transform:rotate(215deg); }
+		.r22f4{ width:2px; height:2px; right:20px; top:34px; -moz-transform:rotate(115deg); -webkit-transform:rotate(115deg); -o-border-transform:rotate(115deg); border-transform:rotate(115deg); }
+		
+		.r23f1{ width:2px; height:2px; right:1px; top:-3px; -moz-transform:rotate(200deg); -webkit-transform:rotate(200deg); -o-border-transform:rotate(200deg); border-transform:rotate(200deg); }
+		.r23f2{ width:2px; height:2px; right:1px; top:-3px; -moz-transform:rotate(150deg); -webkit-transform:rotate(150deg); -o-border-transform:rotate(150deg); border-transform:rotate(150deg); }
+		.r23f3{ width:2px; height:2px; right:1px; top:-3px; -moz-transform:rotate(300deg); -webkit-transform:rotate(300deg); -o-border-transform:rotate(300deg); border-transform:rotate(300deg); }
+		.r23f4{ width:2px; height:2px; right:1px; top:-3px; -moz-transform:rotate(200deg); -webkit-transform:rotate(200deg); -o-border-transform:rotate(200deg); border-transform:rotate(200deg); }
+
+		.r3f1{ width:0px; height:0px; right:1px; top:-3px; -moz-transform:rotate(5deg); -webkit-transform:rotate(5deg); -o-border-transform:rotate(5deg); border-transform:rotate(5deg); }
+		.r3f2{ width:3px; height:3px; right:1px; top:-3px; -moz-transform:rotate(115deg); -webkit-transform:rotate(115seg); -o-border-transform:rotate(115deg); border-transform:rotate(115deg); }
+		.r3f3{ width:0px; height:0px; right:1px; top:-3px; -moz-transform:rotate(200deg); -webkit-transform:rotate(200deg); -o-border-transform:rotate(200deg); border-transform:rotate(200deg); }
+		.r3f4{ width:3px; height:3px; right:28px; top:16px; -moz-transform:rotate(85deg); -webkit-transform:rotate(85deg); -o-border-transform:rotate(85deg); border-transform:rotate(85deg); }
+		.r3f5{ width:10px; height:10px; right:25px; top:19px; -moz-transform:rotate(145deg); -webkit-transform:rotate(145deg); -o-border-transform:rotate(145deg); border-transform:rotate(145deg); }
+	
+		.r4f1{ width:0px; height:0px; right:-1px; top:3px; -moz-transform:rotate(115deg); -webkit-transform:rotate(115deg); -o-border-transform:rotate(115deg); border-transform:rotate(115deg); }
+		.r4f2{ width:2px; height:2px; right:-1px; top:3px; -moz-transform:rotate(258deg); -webkit-transform:rotate(258deg); -o-border-transform:rotate(258deg); border-transform:rotate(258deg); }
+		.r4f3{ width:3px; height:3px; right:2px; top:17px; -moz-transform:rotate(0deg); -webkit-transform:rotate(0deg); -o-border-transform:rotate(0deg); border-transform:rotate(0deg); }
+		.r4f4{ width:8px; height:8px; right:4px; top:18px; -moz-transform:rotate(160deg); -webkit-transform:rotate(160deg); -o-border-transform:rotate(160deg); border-transform:rotate(160deg); }
+		
+		.rama5 .flor{ width:15px; height:15px; right:3px; top:4px; -moz-transform:rotate(130deg); -webkit-transform:rotate(130deg); -o-border-transform:rotate(130deg); border-transform:rotate(130deg); }
+	}
+	
+	@media screen and (max-width: 550px) { 
+		#marco{ width:280px; height:190px; -moz-border-radius:50px 50px 50px 0; -webkit-border-radius:50px 50px 50px 0; -o-border-radius:50px 50px 50px 0; border-radius:50px 50px 50px 0; }
+		#textos{ text-align:left; font-size:13px; bottom:10px; left:20px; top:auto; right:auto; -moz-animation:fade 15s; animation:fade 15s; }
+		#textos p{ margin:0; }
+		
+		.rama1{ width:150px; height:100px; border-width:15px 0px 0px 5px; border-color: #1a4a00; }
+		.rama2{ right:150px; top:12px; width:60px; height:80px; border-width:0px 7px 2px 0px; border-color: #1a4a00; }
+			.rama21{ border-width:4px 0px 0px 2px; right:3px; top:52px; width:10px; height:10px; border-color: #1a4a00; }
+				.rama211{ border-width:0px 2px 1px 0px; right:8px; top:0px; width:1px; height:1px; border-color: #1a4a00; }
+			.rama22{ border-width:0px 2px 1px 0px; right:45px; top:80px; width:3px; height:3px; border-color: #1a4a00; }
+			.rama23{ border-width:1px 0px 0px 1px; right:54px; top:80px; width:1px; height:1px; border-color: #1a4a00; }
+		.rama3{ border-width:4px 0px 0px 2px; right:134px; top:36px; width:10px; height:5px; border-color: #1a4a00; }
+			.rama31{ border-width:1px 0px 0px 1px; right:8px; top:1px; width:1px; height:1px; border-color: #1a4a00; }
+		.rama4{ border-width:0px 3px 1px 0px; right:152px; top:80px; width:5px; height:10px; border-color: #1a4a00; }
+			.rama41{ border-width:0px 1px 1px 0px; right:0px; top:7px; width:1px; height:1px; border-color: #1a4a00; }	
+		.rama5{ border-width:0px 0px 2px 1px; right:107px; top:14px; width:2px; height:2px; border-color: #1a4a00; }
+/*flores*/		
+		.r1f1{ width:0px; height:0px; right:108px; top:0px; -moz-transform:rotate(190deg); -webkit-transform:rotate(190deg); -o-border-transform:rotate(190deg); border-transform:rotate(190deg); }
+		.r1f2{ width:2px; height:2px; right:142px; top:63px; -moz-transform:rotate(230deg); -webkit-transform:rotate(230deg); -o-border-transform:rotate(230deg); border-transform:rotate(230deg); }
+		.r1f3{ width:3px; height:3px; right:137px; top:40px; -moz-transform:rotate(110deg); -webkit-transform:rotate(110deg); -o-border-transform:rotate(110deg); border-transform:rotate(110deg); }
+		
+		.r2f1{ width:1px; height:1px; right:41px; top:77px; -moz-transform:rotate(220deg); -webkit-transform:rotate(220deg); -o-border-transform:rotate(220deg); border-transform:rotate(220deg); }
+		.r2f2{ width:5px; height:5px; right:43px; top:77px; -moz-transform:rotate(126deg); -webkit-transform:rotate(126deg); -o-border-transform:rotate(126deg); border-transform:rotate(126deg); }
+		.r2f3{ width:1px; height:1px; right:14px; top:58px; -moz-transform:rotate(110deg); -webkit-transform:rotate(110deg); -o-border-transform:rotate(110deg); border-transform:rotate(110deg); }
+		.r2f4{ width:1px; height:1px; right:7px; top:46px; -moz-transform:rotate(121deg); -webkit-transform:rotate(121deg); -o-border-transform:rotate(121deg); border-transform:rotate(121deg); }
+		.r2f5{ width:10px; height:10px; right:5px; top:47px; -moz-transform:rotate(126deg); -webkit-transform:rotate(126deg); -o-border-transform:rotate(126deg); border-transform:rotate(126deg); }
+	
+		.r21f1{ width:0px; height:0px; right:8px; top:0px; -moz-transform:rotate(117deg); -webkit-transform:rotate(117deg); -o-border-transform:rotate(117deg); border-transform:rotate(117deg); }
+		.r21f2{ width:0px; height:0px; right:10px; top:5px; -moz-transform:rotate(116deg); -webkit-transform:rotate(116deg); -o-border-transform:rotate(116deg); border-transform:rotate(116deg); }
+		.r21f3{ width:0px; height:0px; right:11px; top:7px; -moz-transform:rotate(12deg); -webkit-transform:rotate(12deg); -o-border-transform:rotate(12deg); border-transform:rotate(12deg); }
+		.r21f4{ width:0px; height:0px; right:0px; top:0px; -moz-transform:rotate(100deg); -webkit-transform:rotate(100deg); -o-border-transform:rotate(100deg); border-transform:rotate(100deg); }
+	
+		.r22f1{ width:2px; height:2px; right:-2px; top:0px; -moz-transform:rotate(46deg); -webkit-transform:rotate(46deg); -o-border-transform:rotate(46deg); border-transform:rotate(46deg); }
+		.r22f2{ width:0px; height:0px; right:0px; top:0px; -moz-transform:rotate(10deg); -webkit-transform:rotate(10deg); -o-border-transform:rotate(10deg); border-transform:rotate(10deg); }
+		.r22f3{ width:0px; height:0px; right:1px; top:3px; -moz-transform:rotate(121deg); -webkit-transform:rotate(121deg); -o-border-transform:rotate(121deg); border-transform:rotate(121deg); }
+		.r22f4{ width:0px; height:0px; right:1px; top:3px; -moz-transform:rotate(11deg); -webkit-transform:rotate(11deg); -o-border-transform:rotate(11deg); border-transform:rotate(11deg); }
+	
+		.r23f1{ width:0px; height:0px; right:0px; top:-2px; -moz-transform:rotate(200deg); -webkit-transform:rotate(200deg); -o-border-transform:rotate(200deg); border-transform:rotate(200deg); }
+		.r23f2{ width:0px; height:0px; right:0px; top:-2px; -moz-transform:rotate(150deg); -webkit-transform:rotate(150deg); -o-border-transform:rotate(150deg); border-transform:rotate(150deg); }
+		.r23f3{ width:0px; height:0px; right:0px; top:-2px; -moz-transform:rotate(300deg); -webkit-transform:rotate(300deg); -o-border-transform:rotate(300deg); border-transform:rotate(300deg); }
+		.r23f4{ width:0px; height:0px; right:0px; top:-2px; -moz-transform:rotate(200deg); -webkit-transform:rotate(200deg); -o-border-transform:rotate(200deg); border-transform:rotate(200deg); }
+		
+		.r3f1{ width:0px; height:0px; right:5px; top:-4px; -moz-transform:rotate(25deg); -webkit-transform:rotate(25deg); -o-border-transform:rotate(25deg); border-transform:rotate(25deg); }
+		.r3f2{ width:0px; height:0px; right:0px; top:-3px; -moz-transform:rotate(115deg); -webkit-transform:rotate(115deg); -o-border-transform:rotate(115deg); border-transform:rotate(115deg); }
+		.r3f4{ width:0px; height:0px; right:10px; top:2px; -moz-transform:rotate(85deg); -webkit-transform:rotate(85deg); -o-border-transform:rotate(85deg); border-transform:rotate(85deg); }
+		.r3f5{ width:2px; height:2px; right:10px; top:2px; -moz-transform:rotate(45deg); -webkit-transform:rotate(45deg); -o-border-transform:rotate(45deg); border-transform:rotate(45deg); }
+		
+		.r4f2{ width:0px; height:0px; right:-2px; top:-1px; -moz-transform:rotate(125deg); -webkit-transform:rotate(125deg); -o-border-transform:rotate(125deg); border-transform:rotate(125deg); }
+		.r4f3{ width:0px; height:0px; right:0px; top:8px; -moz-transform:rotate(100deg); -webkit-transform:rotate(100deg); -o-border-transform:rotate(100deg); border-transform:rotate(100deg); }
+		.r4f4{ width:2px; height:2px; right:2px; top:9px; -moz-transform:rotate(60deg); -webkit-transform:rotate(60deg); -o-border-transform:rotate(60deg); border-transform:rotate(60deg); }
+		
+		.rama5 .flor{ width:0px; height:0px; right:0px; top:0px; -moz-transform:rotate(230deg); -webkit-transform:rotate(230deg); -o-border-transform:rotate(230deg); border-transform:rotate(230deg); }		
+	}
+	</style>
+</head>
+<body>
+<div id="marco">
+	<div class="rama1">
+		<div class="rama2">
+			<div class="rama21">
+				<div class="rama211">
+					<div class="flor r21f4"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+				</div>
+				<div class="flor r21f1"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+				<div class="flor r21f2"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+				<div class="flor r21f3"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+			</div>
+			<div class="rama22">
+				<div class="flor r22f1"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+				<div class="flor r22f2"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+				<div class="flor r22f3"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+				<div class="flor r22f4"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+			</div>
+			<div class="rama23">
+				<div class="flor r23f1"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+				<div class="flor r23f2"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+				<div class="flor r23f3"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+				<div class="flor r23f4"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+			</div>
+			<div class="flor r2f1"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+			<div class="flor r2f2"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+			<div class="flor r2f3"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+			<div class="flor r2f4"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+			<div class="flor r2f5"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+		</div>
+		<div class="rama3">
+			<div class="rama31">
+				<div class="flor r3f1"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+				<div class="flor r3f2"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+				<div class="flor r3f3"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+			</div>
+			<div class="flor r3f4"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+			<div class="flor r3f5"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+		</div>
+		<div class="rama4">
+			<div class="rama41">
+				<div class="flor r4f1"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+				<div class="flor r4f2"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+			</div>
+			<div class="flor r4f3"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+			<div class="flor r4f4"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+		</div>
+		<div class="rama5">
+			<div class="flor"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+		</div>
+		<div class="flor r1f1"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+		<div class="flor r1f2"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+		<div class="flor r1f3"><div class="centro"></div><div class="hoja h1"></div><div class="hoja h2"></div><div class="hoja h3"></div><div class="hoja h4"></div></div>
+	</div>
+	<div id="textos">
+		<p>The hard and the stiff will be broken.</p>
+		<p>The soft and supple will prevail.</p>
+		<p><small>- Tao Te Ching -</small></p>
+	</div>
+</div>
+</body>
+</html>
