@@ -39,7 +39,7 @@
 #define GOLDEN_RATIO 0.618f
 #define N_SUB_BRANCH 3
 
-#define MAX_FLOWER_R 30
+#define MAX_FLOWER_R 25
 #define MIN_FLOWER_R 10
 
 #define LENGTH(x,y) ((glfloat)(sqrt(pow((x),2)+pow((y),2))))
@@ -676,7 +676,7 @@ glgenerate_flower(glfloat x, glfloat y) {
     flo = glcreate_flower();
     flo->sp = (glfloat)(MIN_FLOWER_R + rand()%(MAX_FLOWER_R-MIN_FLOWER_R));
     flo->sl = 0.50f;
-    flo->sc = 5.0f;
+    flo->sc = 5.0f * flo->sp/10.0f;
     flo->p.x = x;
     flo->p.y = y;
     flo->p.z = 0.0f;
@@ -702,7 +702,7 @@ glgenerate_branch_flowers(glbranch * b) {
     get_center_p(v, n, &x1, &y1);
 
     l = LENGTH(x1-x0, y1-y0);
-    nf = (size_t) (l/(4*MAX_FLOWER_R));
+    nf = (size_t) (l/(2*MAX_FLOWER_R));
     if (0 == nf)
         nf = 1;
     step = n / nf;
@@ -717,6 +717,7 @@ static void
 glgenerate_branches_flowers() {
     glbranch * b;
 
+//    glgenerate_branch_flowers(g_main_branchs);
     for (b = g_sub_branchs; b != NULL; b = b->next) 
         glgenerate_branch_flowers(b);
 }
@@ -861,6 +862,56 @@ glcreate_main_branch_obj(glvector * * pv) {
 //sub branch generate algorithm
 //
 
+static void
+glpush_sub_branch(glbranch * b) {
+    b->next = g_sub_branchs;
+    g_sub_branchs = b;
+}
+
+#define N_BRANCHES 5
+static glfloat g_sub_branches[][7] = {
+    {2.094395f, 1.200000f, 180.000000f, 160.000000f, 12.477837f, 4.766534f, 0.300000f},
+    {2.094395f, 1.700000f, 180.000000f, 160.000000f, 12.477837f, 4.766534f, 0.320000f},
+    {2.094395f, 2.100000f, 150.000000f, 120.000000f, 10.000000f, 3.000000f, 0.700000f},
+    {2.100000f, 0.500000f, 140.000000f, 120.000000f, 8.500000f, 2.800000f, 0.900000f},
+    {2.100000f, 0.100000f, 100.000000f, 80.000000f, 8.500000f, 2.800000f, 0.950000f},
+};
+static bool g_sub_branches_flip[] = {
+    false,
+    true,
+    false,
+    true,
+    false
+};
+
+static void
+generate_sub_branches(glvector * v) {
+    size_t i;
+    glbranch * b;
+    size_t n = glget_vector_size(v)/6 - 1;
+
+    for (i = 0; i < N_BRANCHES; ++i) {
+        glfloat x, y;
+
+        b = glcreate_branch();
+
+        b->al   =  g_sub_branches[i][0];
+        b->ar   =  g_sub_branches[i][1];
+        b->rx   =  g_sub_branches[i][2];
+        b->ry   =  g_sub_branches[i][3];
+        b->wmax =  g_sub_branches[i][4];
+        b->wmin =  g_sub_branches[i][5];
+
+        get_center_p(v, (size_t)(g_sub_branches[i][6]*n), &x, &y); 
+        b->p.x  =  x;
+        b->p.y  =  y;
+        b->p.z  =  0.6f;
+
+        b->isflip = g_sub_branches_flip[i];
+
+        glpush_sub_branch(b);
+    }
+}
 
 static void
 glcreate_sub_branch_objs() {
@@ -875,12 +926,7 @@ glcreate_sub_branch_objs() {
     }
 }
 
-static void
-glpush_sub_branch(glbranch * b) {
-    b->next = g_sub_branchs;
-    g_sub_branchs = b;
-}
-
+/*
 static void
 generate_sub_branch(glvector * v, glfloat rx, glfloat ry, glfloat al, glfloat ar) {
     size_t n = glget_vector_size(v)/6;
@@ -900,7 +946,7 @@ generate_sub_branch(glvector * v, glfloat rx, glfloat ry, glfloat al, glfloat ar
 
         b->al = al * pow(GOLDEN_RATIO, i);
         get_center_p(v, pos, &x, &y);
-        b->ar = atan(y/x);
+        b->ar = atan(y/x)*2.0f;
 
         b->rx = rx * pow(GOLDEN_RATIO, i);
         b->ry = ry * pow(GOLDEN_RATIO, i);
@@ -917,6 +963,7 @@ generate_sub_branch(glvector * v, glfloat rx, glfloat ry, glfloat al, glfloat ar
         glpush_sub_branch(b);
     }
 }
+*/
 
 static void
 create_branch() {
@@ -925,9 +972,9 @@ create_branch() {
     g_main_branchs = glcreate_branch();
 
 	g_main_branchs->al = 120.0f/180.0f*PI;
-	g_main_branchs->ar = 60.0f/180.0f*PI;
+	g_main_branchs->ar = 50.0f/180.0f*PI;
 
-	g_main_branchs->rx = 250;
+	g_main_branchs->rx = 220;
     g_main_branchs->ry = 200;
 
 	g_main_branchs->wmax = 20;
@@ -942,7 +989,8 @@ create_branch() {
     generate_main_branch(g_main_branchs);
     glcreate_main_branch_obj(&v);
 
-    generate_sub_branch(v,g_main_branchs->rx, g_main_branchs->ry, g_main_branchs->al, g_main_branchs->ar);
+//    generate_sub_branch(v,g_main_branchs->rx, g_main_branchs->ry, g_main_branchs->al, g_main_branchs->ar);
+    generate_sub_branches(v);
     glcreate_sub_branch_objs();
     glgenerate_branches_flowers();
     glcreate_flower_objs();
