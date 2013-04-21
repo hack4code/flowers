@@ -19,7 +19,7 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 $(OBJDIR)/%.o : ../%.c
-	$(CC) $(CFLAGS) -O0 -g3 -c -o "$@" "$<" 
+	$(CC) $(CFLAGS) -O2 -c -o "$@" "$<" 
 	
 clean:
 	rm -rf $(EXE) $(OBJDIR)/* $(OBJDIR)

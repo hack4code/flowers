@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include "glutil.h"
 
-const glfloat PI = 3.14159265358979323846f;
+//const glfloat PI = 3.14159265358979323846f;
 
 //vector function
 glvector * 

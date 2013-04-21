@@ -32,36 +32,28 @@
 #endif //__linux__
 
 
-
-
 #define STEP 30
 #define BRANCH_STEP (2.0f/180.0f*PI)
-#define GOLDEN_RATIO 0.618f
-#define N_SUB_BRANCH 3
 
-#define MAX_FLOWER_R 25
-#define MIN_FLOWER_R 10
+//#define LENGTH(x,y) ((glfloat)(sqrt(pow((x),2)+pow((y),2))))
 
-#define LENGTH(x,y) ((glfloat)(sqrt(pow((x),2)+pow((y),2))))
+#define PETAL_Z (0.0f)
+#define CENTER_Z (-0.01f)
+#define BRANCH_Z (-0.01f)
 
-static const glfloat g_petal_depth = 0.0f;
-static const glfloat g_center_depth = -0.01f;
-
+#define PETAL_SIZE (10.0f)
+#define CENTER_SIZE (5.0f)
 
 static glfloat g_screen_width = 800.0f;
 static glfloat g_screen_height = 800.0f;
 
-static glbranch * g_main_branchs = NULL;
 static glbranch_obj * g_branch_objs = NULL;
 
 static size_t g_n_flowers = 0;
-static glflower * g_flowers = NULL;
 static glflower_obj * g_flower_objs = NULL;
 
 static glflower_context gfcontext;
 static glbranch_context gbcontext;
-
-extern const glfloat PI;
 
 //colors for center
 static glfloat g_center_colors[][9] = {
@@ -240,7 +232,7 @@ push_arc(glvector ** pv, glarc * pa, int step) {
 }
 
 static void
-push_center_obj(glvector * * pv, glcircle * pc) {
+glpush_center_obj(glvector * * pv, glcircle * pc) {
     glvec3 p;
     glarc a;
     
@@ -252,15 +244,15 @@ push_center_obj(glvector * * pv, glcircle * pc) {
 }
 
 static void
-create_center_vbo() {
+glcreate_center_vbo() {
     glvector * v;
     glcircle c;
     glvec3 p;
 
-    glset_vec3(&p, 0.0f, 0.0f, g_center_depth);
+    glset_vec3(&p, 0.0f, 0.0f, CENTER_Z);
 	glset_circle(&c, &p, 0.5f);
     v = glalloc_vector(0);
-    push_center_obj(&v, &c);
+    glpush_center_obj(&v, &c);
 //	glprint_vector(v);
     gfcontext.cbsize = glget_vector_size(v);
 
@@ -273,7 +265,7 @@ create_center_vbo() {
 }
 
 static void
-push_petal_obj(glvector * * pv, glpetal * pp) {
+glpush_petal_obj(glvector * * pv, glpetal * pp) {
     glvec3 p;
     glarc a;
 
@@ -297,13 +289,13 @@ push_petal_obj(glvector * * pv, glpetal * pp) {
 }
 
 static void
-create_petal_vbo() {
+glcreate_petal_vbo() {
     glvector * v;
     glpetal petal;
 
     v = glalloc_vector(0);
-    glset_petal(&petal, 1.0f, 0.25f*1.0f, 0.50f*1.0f, g_petal_depth); 
-    push_petal_obj(&v, &petal);
+    glset_petal(&petal, 1.0f, 0.25f*1.0f, 0.50f*1.0f, PETAL_Z); 
+    glpush_petal_obj(&v, &petal);
 //	glprint_vector(v);
     gfcontext.pbsize = glget_vector_size(v);
 
@@ -316,7 +308,7 @@ create_petal_vbo() {
 }
 
 void
-set_flower_obj(glflower_obj * fo, glflower * fs) {
+glset_flower_obj(glflower_obj * fo, glflower * fs) {
     glfloat sx = 2.0f/g_screen_width;
     glfloat sy = 2.0f/g_screen_height;
 
@@ -681,134 +673,19 @@ gltransform_branch(glvector * v, glbranch * b) {
     }
 }
 
-/*
- * flower
- */
-
-static void
-glpush_flower(glflower * flo) {
-    flo->next = g_flowers;
-    g_flowers = flo;
-}
-
-static void
-glcreate_flower_objs() {
-    glflower * flo;
-    size_t n = 0;
-
-    for (flo = g_flowers; NULL != flo; flo = flo->next, ++n)
-        ;
-
-    g_n_flowers = n;
-    g_flower_objs = malloc(n * sizeof(*g_flower_objs));
-
-    for (n = 0, flo = g_flowers; n < g_n_flowers; ++n, flo = flo->next) 
-        set_flower_obj(&g_flower_objs[n], flo);
-}
-
 //
-//  main branch genetate algorithm
-//
-
-static void
-glpush_main_branch(glbranch * b) {
-    glbranch * t;
-
-    b->next = NULL;
-    if (NULL == g_main_branchs) 
-        g_main_branchs = b;
-    else {
-        for (t = g_main_branchs; t->next != NULL; t = t->next)
-            ; 
-        t->next = b;
-    }
-}
-
-
-static void
-generate_main_branch(glbranch * bf) {
-    glvec3 p;
-    glfloat as = 1.50f*PI + bf->al/2.0f;
-    glfloat s = get_slope(bf, as);
-    glfloat ar = bf->ar;
-    glbranch * b = glcreate_branch();
-
-    b->ar = ar; 
-    b->rx = bf->rx*0.9f;
-    b->ry = bf->ry*0.9f;
-	b->wmax = bf->wmin;
-    b->wmin = b->wmax * GOLDEN_RATIO;
-    b->isflip = !bf->isflip;
-	b->z = bf->z;
-
-    get_p(&p, bf, as);
-	b->p.x = bf->p.x + p.x * (glfloat)cos(ar) - p.y * (glfloat)sin(ar);
-	b->p.y = bf->p.y + p.x * (glfloat)sin(ar) + p.y * (glfloat)cos(ar);
-    b->p.z = 0;
-
-    b->al = get_al(b, s);
-
-    glpush_main_branch(b);
-}
-
-static void
-glcreate_main_branch_obj(glvector * * pv) {
-    glvector * vec = glalloc_vector(0);
-    glbranch_obj * bo = glcreate_branch_obj();
-    glbranch * tb;
-    glvector * tv;
-    glmat4 m_m;
-    glvec3 v;
-
-    for (tb = g_main_branchs; tb != NULL; tb = tb->next) {
-        tv = glalloc_vector(0);
-        push_branch(&tv, tb, BRANCH_STEP);
-        gltransform_branch(tv, tb);
-        glappend_vector(&vec, tv);
-        glfree_vector(tv);
-        tv = NULL;
-    }
-
-    bo->bbsize = glget_vector_size(vec);
-
-    glGenBuffers(1, &(bo->bvbo));
-    glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
-    glBufferData(GL_ARRAY_BUFFER, bo->bbsize*sizeof(glfloat), glget_vector_array(vec), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    *pv = vec;
-    vec = NULL;
-
-    glset_identify_mat4(&m_m);
-
-    glmutiply_rotatez_mat4(&m_m, PI);
-
-    v.x = 2.0f/g_screen_width;
-    v.y = 2.0f/g_screen_height;
-    v.z = 1.0f;
-    glmutiply_scale_mat4(&m_m, &v);
-
-    v.x = 1.0f;
-    v.y = 1.0f;
-    v.z = 0.0f;
-    glmutiply_move_mat4(&m_m, &v);
-
-    glassign_mat4(&(bo->m), &m_m);
-
-    glpush_branch_obj(bo);
-    bo = NULL;
-}
-
-
-//
-//sub branch generate algorithm
+//branch and flower generate 
 //
 
 /*
- *  main branch data
+ *  main branch data 
+ *  al,ar,rx,ry,wmax,wmin, x, y
  */
-static glfloat g_main_branch_data[8] = {2.1f, 0.9f, 240.0f*0.7f, 200.0f*0.7f, 16.0f, 10.0f, 80.0f, 80.0f};
+
+static glfloat g_main_branch_data[8] = {2.1f, 0.9f, 168.0f, 140.0f, 16.0f, 10.0f, 80.0f, 80.0f};
 static bool g_main_branch_flip[1] = {false};
+
+static glbranch * g_main_branchs = NULL;
 static glvector * g_main_branch_vec = NULL;
 
 /*
@@ -816,15 +693,15 @@ static glvector * g_main_branch_vec = NULL;
  */
 #define N_1STSUB_BRANCHES 5
 
-static glfloat g_sub_branches_array[N_1STSUB_BRANCHES][7] = {
-    {2.1f, 1.0f, 180.0f*0.6f, 160.0f*0.6f, 12.5f*0.7f, 4.8f*0.7f, 0.48f},   //al, ar, rx, ry, wmax, wmin, position ratio
-    {2.1f, 1.7f, 180.0f*0.7f, 160.0f*0.7f, 12.5f*0.7f, 4.8f*0.7f, 0.50f},
-    {2.1f, 2.1f, 150.0f*0.8f, 120.0f*0.7f, 10.0f*0.7f, 2.0f, 0.75f},
-    {2.1f, 0.6f, 120.0f, 100.0f,  7.0f, 2.0f, 0.90f},
-    {2.1f, 0.2f,  80.0f,  70.0f,  6.0f, 2.0f, 0.93f}
+static glfloat g_1stsub_branches_array[N_1STSUB_BRANCHES][7] = {
+    {2.1f, 1.0f, 108.0f,  96.0f, 8.75f, 3.36f, 0.48f},
+    {2.1f, 1.7f, 126.0f, 112.0f, 8.75f, 3.36f, 0.50f},
+    {2.1f, 2.1f, 120.0f,  84.0f, 7.00f, 2.00f, 0.75f},
+    {2.1f, 0.6f, 120.0f, 100.0f,  7.0f, 2.00f, 0.90f},
+    {2.1f, 0.2f,  80.0f,  70.0f,  6.0f, 2.00f, 0.93f}
 };
 
-static bool g_sub_branches_flip[N_1STSUB_BRANCHES] = {
+static bool g_1stsub_branches_flip[N_1STSUB_BRANCHES] = {
     false,
     true,
     false,
@@ -832,8 +709,8 @@ static bool g_sub_branches_flip[N_1STSUB_BRANCHES] = {
     false
 };
 
-static glbranch * g_sub_branches[N_1STSUB_BRANCHES] = {0};
-static glvector * g_sub_branches_vec[N_1STSUB_BRANCHES] = {0};
+static glbranch * g_1stsub_branches[N_1STSUB_BRANCHES] = {0};
+static glvector * g_1stsub_branches_vec[N_1STSUB_BRANCHES] = {0};
 
 /*
  *  2nd branches data
@@ -871,22 +748,117 @@ static glfloat g_main_branch_flowers[N_MAIN_BRANCH_FLOWERS][2] = {
  *  1st branch flowers data
  */
 static glfloat g_1stsub_branch_flowers[N_1STSUB_BRANCHES][4][2] = {
-    { {0.60f, 2.0f}, {0.80f, 2.4f}, {0.00f, 0.0f}, {0.0f, 0.0f}},
-    { {0.20f, 2.0f}, {0.55f, 1.6f}, {0.70f, 2.4f}, {0.0f, 0.0f}},
-    { {0.40f, 2.4f}, {0.65f, 1.6f}, {0.80f, 1.1f}, {0.0f, 0.0f}},
-    { {0.20f, 2.4f}, {0.40f, 1.6f}, {0.70f, 1.8f}, {0.85f, 1.0f}},
-    { {0.15f, 1.1f}, {0.40f, 1.8f}, {0.70f, 1.9f}, {0.95f, 1.0f}},
+    {{0.60f, 2.0f}, {0.80f, 2.4f}, {0.00f, 0.0f}, {0.00f, 0.0f}},
+    {{0.20f, 2.0f}, {0.55f, 1.6f}, {0.70f, 2.4f}, {0.00f, 0.0f}},
+    {{0.40f, 2.4f}, {0.65f, 1.6f}, {0.80f, 1.1f}, {0.00f, 0.0f}},
+    {{0.20f, 2.4f}, {0.40f, 1.6f}, {0.70f, 1.8f}, {0.85f, 1.0f}},
+    {{0.15f, 1.1f}, {0.40f, 1.8f}, {0.70f, 1.9f}, {0.95f, 1.0f}}
 };
 
 /*
  *  2nd branch flowers data
  */
 static glfloat g_2ndsub_branch_flowers[N_2NDSUB_BRANCHES][3][2] = {
-    { {0.10f, 1.4f}, {0.32f, 2.4f}, {0.60f, 1.2f} },
-    { {0.55f, 1.8f}, {0.70f, 1.0f}, {0.00f, 0.0f} },
-    { {0.40f, 1.6f}, {0.00f, 0.0f}, {0.00f, 0.0f} }
+    {{0.10f, 1.4f}, {0.32f, 2.4f}, {0.60f, 1.2f}},
+    {{0.55f, 1.8f}, {0.70f, 1.0f}, {0.00f, 0.0f}},
+    {{0.40f, 1.6f}, {0.00f, 0.0f}, {0.00f, 0.0f}}
 };
 
+static glflower * g_flowers = NULL;
+
+/*
+ *  main branch generate
+ */
+
+static void
+glpush_main_branch(glbranch * b) {
+    glbranch * t;
+
+    b->next = NULL;
+    if (NULL == g_main_branchs) 
+        g_main_branchs = b;
+    else {
+        for (t = g_main_branchs; t->next != NULL; t = t->next)
+            ; 
+        t->next = b;
+    }
+}
+
+static void
+generate_main_branch() {
+    glvec3 p;
+    glfloat as = 1.50f*PI + g_main_branchs->al/2.0f;
+    glfloat s = get_slope(g_main_branchs, as);
+    glfloat ar = g_main_branchs->ar;
+    glbranch * b = glcreate_branch();
+
+    b->ar = ar; 
+    b->rx = g_main_branchs->rx*0.9f;
+    b->ry = g_main_branchs->ry*0.9f;
+	b->wmax = g_main_branchs->wmin;
+    b->wmin = b->wmax * 0.618f;
+    b->isflip = !g_main_branchs->isflip;
+	b->z = g_main_branchs->z;
+
+    get_p(&p, g_main_branchs, as);
+	b->p.x = g_main_branchs->p.x + p.x * (glfloat)cos(ar) - p.y * (glfloat)sin(ar);
+	b->p.y = g_main_branchs->p.y + p.x * (glfloat)sin(ar) + p.y * (glfloat)cos(ar);
+    b->p.z = 0;
+
+    b->al = get_al(b, s);
+
+    glpush_main_branch(b);
+}
+
+static void
+glcreate_main_branch_obj() {
+    glvector * vec = glalloc_vector(0);
+    glbranch_obj * bo = glcreate_branch_obj();
+    glbranch * tb;
+    glvector * tv;
+    glmat4 m_m;
+    glvec3 v;
+
+    for (tb = g_main_branchs; tb != NULL; tb = tb->next) {
+        tv = glalloc_vector(0);
+        push_branch(&tv, tb, BRANCH_STEP);
+        gltransform_branch(tv, tb);
+        glappend_vector(&vec, tv);
+        glfree_vector(tv);
+        tv = NULL;
+    }
+
+    bo->bbsize = glget_vector_size(vec);
+
+    glGenBuffers(1, &(bo->bvbo));
+    glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
+    glBufferData(GL_ARRAY_BUFFER, bo->bbsize*sizeof(glfloat), glget_vector_array(vec), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    g_main_branch_vec = vec;
+
+    glset_identify_mat4(&m_m);
+
+    glmutiply_rotatez_mat4(&m_m, PI);
+
+    v.x = 2.0f/g_screen_width;
+    v.y = 2.0f/g_screen_height;
+    v.z = 1.0f;
+    glmutiply_scale_mat4(&m_m, &v);
+
+    v.x = 1.0f;
+    v.y = 1.0f;
+    v.z = 0.0f;
+    glmutiply_move_mat4(&m_m, &v);
+
+    glassign_mat4(&(bo->m), &m_m);
+
+    glpush_branch_obj(bo);
+    bo = NULL;
+}
+
+/*
+ *  1st branch generate
+ */
 static void
 glgenerate_1stsub_branches() {
     size_t i;
@@ -898,21 +870,21 @@ glgenerate_1stsub_branches() {
 
         b = glcreate_branch();
 
-        b->al   =  g_sub_branches_array[i][0];
-        b->ar   =  g_sub_branches_array[i][1];
-        b->rx   =  g_sub_branches_array[i][2];
-        b->ry   =  g_sub_branches_array[i][3];
-        b->wmax =  g_sub_branches_array[i][4];
-        b->wmin =  g_sub_branches_array[i][5];
+        b->al   =  g_1stsub_branches_array[i][0];
+        b->ar   =  g_1stsub_branches_array[i][1];
+        b->rx   =  g_1stsub_branches_array[i][2];
+        b->ry   =  g_1stsub_branches_array[i][3];
+        b->wmax =  g_1stsub_branches_array[i][4];
+        b->wmin =  g_1stsub_branches_array[i][5];
 
-        get_center_p(g_main_branch_vec, (size_t)(g_sub_branches_array[i][6]*n), &x, &y); 
+        get_center_p(g_main_branch_vec, (size_t)(g_1stsub_branches_array[i][6]*n), &x, &y); 
         b->p.x  =  x;
         b->p.y  =  y;
-        b->p.z  =  0.6f;
+        b->p.z  =  BRANCH_Z;
 
-        b->isflip = g_sub_branches_flip[i];
+        b->isflip = g_1stsub_branches_flip[i];
 
-        g_sub_branches[i] = b;
+        g_1stsub_branches[i] = b;
     }
 }
 
@@ -923,13 +895,16 @@ glcreate_1stsub_branch_objs() {
     glvector * v;
 
     for (i = 0; i < N_1STSUB_BRANCHES; ++i) {
-        bo = glget_branch_obj(g_sub_branches[i], &v);
-        gltransform_branch(v, g_sub_branches[i]);
-        g_sub_branches_vec[i] = v;
+        bo = glget_branch_obj(g_1stsub_branches[i], &v);
+        gltransform_branch(v, g_1stsub_branches[i]);
+        g_1stsub_branches_vec[i] = v;
         glpush_branch_obj(bo);
     }
 }
 
+/*
+ *  2nd branch generate
+ */
 static void
 glgenerate_2ndsub_branches() {
     size_t i;
@@ -937,7 +912,7 @@ glgenerate_2ndsub_branches() {
     for (i = 0; i < N_2NDSUB_BRANCHES; ++i) {
         glfloat x, y;
         glbranch * b;
-        size_t n = glget_vector_size(g_sub_branches_vec[i])/6 - 1;
+        size_t n = glget_vector_size(g_1stsub_branches_vec[i])/6 - 1;
 
         b = glcreate_branch();
 
@@ -948,10 +923,10 @@ glgenerate_2ndsub_branches() {
         b->wmax =  g_2ndsub_branches_array[i][4];
         b->wmin =  g_2ndsub_branches_array[i][5];
 
-        get_center_p(g_sub_branches_vec[i], (size_t)(g_2ndsub_branches_array[i][6]*n), &x, &y); 
+        get_center_p(g_1stsub_branches_vec[i], (size_t)(g_2ndsub_branches_array[i][6]*n), &x, &y); 
         b->p.x  =  x;
         b->p.y  =  y;
-        b->p.z  =  0.6f;
+        b->p.z  =  BRANCH_Z;
 
         b->isflip = g_2ndsub_branches_flip[i];
 
@@ -973,6 +948,35 @@ glcreate_2ndsub_branch_objs() {
     }
 }
 
+
+/*
+ * flower
+ */
+
+static void
+glpush_flower(glflower * flo) {
+    flo->next = g_flowers;
+    g_flowers = flo;
+}
+
+static void
+glcreate_flower_objs() {
+    glflower * flo;
+    size_t n = 0;
+
+    for (flo = g_flowers; NULL != flo; flo = flo->next, ++n)
+        ;
+
+    g_n_flowers = n;
+    g_flower_objs = malloc(n * sizeof(*g_flower_objs));
+
+    for (n = 0, flo = g_flowers; n < g_n_flowers; ++n, flo = flo->next) 
+        glset_flower_obj(&g_flower_objs[n], flo);
+}
+
+/*
+ *  main branch flower generate
+ */
 static void
 glgenerate_main_branches_flowers() {
     size_t i;
@@ -987,14 +991,14 @@ glgenerate_main_branches_flowers() {
 
         flo = glcreate_flower();
 
-        flo->sp = g_main_branch_flowers[i][1] * 10.0f;
-        flo->sc = g_main_branch_flowers[i][1] * 5.0f;
+        flo->sp = g_main_branch_flowers[i][1] * PETAL_SIZE;
+        flo->sc = g_main_branch_flowers[i][1] * CENTER_SIZE;
         flo->sl = 0.50f;
 
         get_center_p(g_main_branch_vec, (size_t)(g_main_branch_flowers[i][0]*n), &x, &y); 
         flo->p.x = x;
         flo->p.y = y;
-        flo->p.z = g_main_branch_flowers[i][1]/3.0f;
+        flo->p.z = -g_main_branch_flowers[i][1]/3.0f;
         flo->a = rand()%45;
         flo->cf = 0;
 
@@ -1002,12 +1006,15 @@ glgenerate_main_branches_flowers() {
    }
 }
 
+/*
+ *  1st branch flowers generate
+ */
 static void
 glgenerate_1stsub_branches_flowers() {
     size_t i, j;
 
     for (i = 0; i < N_1STSUB_BRANCHES; ++i)  {
-        size_t n = glget_vector_size(g_sub_branches_vec[i])/6 - 1;
+        size_t n = glget_vector_size(g_1stsub_branches_vec[i])/6 - 1;
 
         for (j = 0; j < 4; ++j) {
             glflower * flo;
@@ -1018,14 +1025,14 @@ glgenerate_1stsub_branches_flowers() {
 
             flo = glcreate_flower();
 
-            flo->sp = g_1stsub_branch_flowers[i][j][1] * 10.0f;
-            flo->sc = g_1stsub_branch_flowers[i][j][1] * 5.0f;
+            flo->sp = g_1stsub_branch_flowers[i][j][1] * PETAL_SIZE;
+            flo->sc = g_1stsub_branch_flowers[i][j][1] * CENTER_SIZE;
             flo->sl = 0.50f;
 
-            get_center_p(g_sub_branches_vec[i], (size_t)(g_1stsub_branch_flowers[i][j][0]*n), &x, &y); 
+            get_center_p(g_1stsub_branches_vec[i], (size_t)(g_1stsub_branch_flowers[i][j][0]*n), &x, &y); 
             flo->p.x = x;
             flo->p.y = y;
-            flo->p.z = g_1stsub_branch_flowers[i][j][1]/3.0f;
+            flo->p.z = -g_1stsub_branch_flowers[i][j][1]/3.0f;
             flo->a = rand()%45;
             flo->cf = 0;
 
@@ -1034,6 +1041,9 @@ glgenerate_1stsub_branches_flowers() {
     }
 }
 
+/*
+ *  2nd branch flower generate
+ */
 static void
 glgenerate_2ndsub_branches_flowers() {
     size_t i, j;
@@ -1050,14 +1060,14 @@ glgenerate_2ndsub_branches_flowers() {
 
             flo = glcreate_flower();
 
-            flo->sp = g_2ndsub_branch_flowers[i][j][1] * 10.0f;
-            flo->sc = g_2ndsub_branch_flowers[i][j][1] * 5.0f;
+            flo->sp = g_2ndsub_branch_flowers[i][j][1] * PETAL_SIZE;
+            flo->sc = g_2ndsub_branch_flowers[i][j][1] * CENTER_SIZE;
             flo->sl = 0.50f;
 
             get_center_p(g_2ndsub_branches_vec[i], (size_t)(g_2ndsub_branch_flowers[i][j][0]*n), &x, &y); 
             flo->p.x = x;
             flo->p.y = y;
-            flo->p.z = g_2ndsub_branch_flowers[i][j][1]/3.0f;
+            flo->p.z = -g_2ndsub_branch_flowers[i][j][1]/3.0f;
             flo->a = rand()%45;
             flo->cf = 0;
 
@@ -1067,7 +1077,7 @@ glgenerate_2ndsub_branches_flowers() {
 }
 
 static void
-create_branch() {
+glgenerate_flower_tree() {
     g_main_branchs = glcreate_branch();
 
 	g_main_branchs->al = g_main_branch_data[0];
@@ -1082,16 +1092,18 @@ create_branch() {
     g_main_branchs->p.x = g_main_branch_data[6];
     g_main_branchs->p.y = g_main_branch_data[7];
     g_main_branchs->p.z = 0.0f;
-	g_main_branchs->z = 0.6f;
+	g_main_branchs->z = BRANCH_Z;
 	g_main_branchs->isflip = g_main_branch_flip[0];
 
-    generate_main_branch(g_main_branchs);
-    glcreate_main_branch_obj(&g_main_branch_vec);
+    generate_main_branch();
+    glcreate_main_branch_obj();
 
     glgenerate_1stsub_branches();
     glcreate_1stsub_branch_objs();
+
     glgenerate_2ndsub_branches();
     glcreate_2ndsub_branch_objs();
+
     glgenerate_main_branches_flowers();
     glgenerate_1stsub_branches_flowers();
     glgenerate_2ndsub_branches_flowers();
@@ -1112,7 +1124,7 @@ glinit_flower_context() {
         fprintf(stdout, "compile petal programe error!\n");
         exit(EXIT_FAILURE);
     }
-    create_petal_vbo();
+    glcreate_petal_vbo();
 
     glUseProgram(gfcontext.pprg.pid);
     gfcontext.pvloc_ver = glGetAttribLocation(gfcontext.pprg.pid, "vertexs");
@@ -1129,7 +1141,7 @@ glinit_flower_context() {
         fprintf(stderr, "compile center programe error!\n");
         exit(EXIT_FAILURE);
     }
-    create_center_vbo();
+    glcreate_center_vbo();
 
     glUseProgram(gfcontext.cprg.pid);
     gfcontext.cvloc_ver = glGetAttribLocation(gfcontext.cprg.pid, "vertexs");
@@ -1159,7 +1171,7 @@ glinit_branch_context() {
     gbcontext.bfloc_cor = glGetUniformLocation(gbcontext.bprg.pid, "color");
     glUseProgram(0);
 
-    create_branch();
+    glgenerate_flower_tree();
 }
 
 void

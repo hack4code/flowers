@@ -41,6 +41,8 @@
     #define false 0
 #endif //__linux__
 
+#define PI (3.1415926f)
+
 typedef GLfloat glfloat;
 typedef GLuint glpid;
 typedef GLuint glshader;
@@ -117,7 +119,5 @@ void glmutiply_rotatez_mat4(glmat4 *, glfloat);
 void glmutiply_move_mat4(glmat4 *, glvec3 *);
 
 glfloat glang_transform(unsigned int);
-
-
 
 #endif //__GLUTIL_H__

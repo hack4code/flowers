@@ -116,14 +116,14 @@ main(int argc, char** argv)
 static void
 render(void) {
 	glEnable(GL_CULL_FACE);
-    glEnable(GL_POLYGON_SMOOTH);
+//    glEnable(GL_POLYGON_SMOOTH);
+    glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
     glClear(GL_DEPTH_BUFFER_BIT);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
     glDepthFunc(GL_LESS);
-    glEnable(GL_DEPTH_TEST);
 	glClearColor(1.0, 1.0, 1.0, 1.0);
     glrender_tree_context();
     glutSwapBuffers();
@@ -133,7 +133,7 @@ int
 main(int argc, char** argv)
 {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(800, 800);
     glutCreateWindow("flower");
     glutDisplayFunc(&render);
