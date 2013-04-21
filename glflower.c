@@ -982,6 +982,9 @@ glgenerate_main_branches_flowers() {
         glflower * flo;
         glfloat x, y;
 
+        if (0.01f > g_main_branch_flowers[i][1])
+            continue;
+
         flo = glcreate_flower();
 
         flo->sp = g_main_branch_flowers[i][1] * 10.0f;
@@ -1009,6 +1012,9 @@ glgenerate_1stsub_branches_flowers() {
         for (j = 0; j < 4; ++j) {
             glflower * flo;
             glfloat x, y;
+
+            if (0.01f > g_1stsub_branch_flowers[i][j][1])
+                continue;
 
             flo = glcreate_flower();
 
@@ -1038,6 +1044,9 @@ glgenerate_2ndsub_branches_flowers() {
         for (j = 0; j < 3; ++j) {
             glflower * flo;
             glfloat x, y;
+
+            if (0.01f > g_2ndsub_branch_flowers[i][j][1])
+                continue;
 
             flo = glcreate_flower();
 
