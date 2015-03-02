@@ -158,7 +158,7 @@ static const glchar * center_fshader =
 static const glchar * branch_vshader =
 {
     "#version 120\n\n" \
-	"attribute vec3 vertexs;\n" \
+    "attribute vec3 vertexs;\n" \
     "uniform mat4 mat;\n\n" \
     "void main()\n" \
     "{\n" \
@@ -250,10 +250,10 @@ glcreate_center_vbo() {
     glvec3 p;
 
     glset_vec3(&p, 0.0f, 0.0f, CENTER_Z);
-	glset_circle(&c, &p, 0.5f);
+    glset_circle(&c, &p, 0.5f);
     v = glalloc_vector(0);
     glpush_center_obj(&v, &c);
-//	glprint_vector(v);
+//  glprint_vector(v);
     gfcontext.cbsize = glget_vector_size(v);
 
     glGenBuffers(1, &(gfcontext.cvbo));
@@ -261,7 +261,7 @@ glcreate_center_vbo() {
     glBufferData(GL_ARRAY_BUFFER, gfcontext.cbsize*sizeof(glfloat), glget_vector_array(v), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glfree_vector(v);
+    glfree_vector(v);
 }
 
 static void
@@ -296,7 +296,7 @@ glcreate_petal_vbo() {
     v = glalloc_vector(0);
     glset_petal(&petal, 1.0f, 0.25f*1.0f, 0.50f*1.0f, PETAL_Z); 
     glpush_petal_obj(&v, &petal);
-//	glprint_vector(v);
+//  glprint_vector(v);
     gfcontext.pbsize = glget_vector_size(v);
 
     glGenBuffers(1, &(gfcontext.pvbo));
@@ -304,7 +304,7 @@ glcreate_petal_vbo() {
     glBufferData(GL_ARRAY_BUFFER, gfcontext.pbsize*sizeof(glfloat), glget_vector_array(v), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glfree_vector(v);
+    glfree_vector(v);
 }
 
 void
@@ -369,7 +369,7 @@ gldraw_petal(glflower_obj * pf) {
         glUniformMatrix4fv(gfcontext.pvloc_mat_mf, 1, true,  glget_mat4_array(m_mf));
 
         glUniform3fv(gfcontext.pfloc_lgc, 2, (const GLfloat *)g_petal_colors[pf->cf]);
-		glUniform1fv(gfcontext.pfloc_lgs, 2, (const GLfloat *)g_petal_stop[pf->cf]);
+        glUniform1fv(gfcontext.pfloc_lgs, 2, (const GLfloat *)g_petal_stop[pf->cf]);
 
         glDrawArrays(GL_TRIANGLE_FAN, 0, gfcontext.pbsize/3);
 
@@ -465,10 +465,10 @@ push_branch(glvector * * v, glbranch * b, glfloat step) {
     glfloat min = b->wmin;
     size_t ns = (size_t)(b->al/step);
     glfloat ws = (max - min)/(ns<<1);
-	glfloat cx = rx * (glfloat)sin(b->al/2);
-	glfloat cy = ry * (glfloat)cos(b->al/2);
+    glfloat cx = rx * (glfloat)sin(b->al/2);
+    glfloat cy = ry * (glfloat)cos(b->al/2);
 
-	glfloat	fa;
+    glfloat fa;
     glvec3 p1, p2;
     size_t i;
 
@@ -539,7 +539,7 @@ glget_branch_obj(glbranch * b, glvector * * pv) {
     vec = glalloc_vector(0);
     push_branch(&vec, b, BRANCH_STEP);
     bo->bbsize = glget_vector_size(vec);
-//	glprint_vector(vec);
+//  glprint_vector(vec);
     
     glGenBuffers(1, &(bo->bvbo));
     glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
@@ -563,14 +563,14 @@ gldraw_branch(glbranch_obj * bo) {
 
     glBindBuffer(GL_ARRAY_BUFFER, bo->bvbo);
     glVertexAttribPointer(gbcontext.bvloc_ver, 3, GL_FLOAT, GL_FALSE, 3*sizeof(glfloat), 0);
-	glEnableVertexAttribArray(gbcontext.bvloc_ver);
+    glEnableVertexAttribArray(gbcontext.bvloc_ver);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, bo->bbsize/3);
-//	glDrawArrays(GL_LINE_STRIP, 0, bo->bbsize/3);
+//  glDrawArrays(GL_LINE_STRIP, 0, bo->bbsize/3);
 
-	glDisableVertexAttribArray(gbcontext.bvloc_ver);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glUseProgram(0);
+    glDisableVertexAttribArray(gbcontext.bvloc_ver);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glUseProgram(0);
 }
 
 static void
@@ -588,8 +588,8 @@ gldraw_branchs() {
 
 static glfloat
 get_slope(glbranch * b, glfloat a) {
-	glfloat s = b->rx/b->ry * (glfloat)tan(a);
-	return (s > 0.0f) ? s : -s;
+    glfloat s = b->rx/b->ry * (glfloat)tan(a);
+    return (s > 0.0f) ? s : -s;
 }
 
 static glfloat
@@ -795,14 +795,14 @@ generate_main_branch() {
     b->ar = ar; 
     b->rx = g_main_branchs->rx*0.9f;
     b->ry = g_main_branchs->ry*0.9f;
-	b->wmax = g_main_branchs->wmin;
+    b->wmax = g_main_branchs->wmin;
     b->wmin = b->wmax * 0.618f;
     b->isflip = !g_main_branchs->isflip;
-	b->z = g_main_branchs->z;
+    b->z = g_main_branchs->z;
 
     get_p(&p, g_main_branchs, as);
-	b->p.x = g_main_branchs->p.x + p.x * (glfloat)cos(ar) - p.y * (glfloat)sin(ar);
-	b->p.y = g_main_branchs->p.y + p.x * (glfloat)sin(ar) + p.y * (glfloat)cos(ar);
+    b->p.x = g_main_branchs->p.x + p.x * (glfloat)cos(ar) - p.y * (glfloat)sin(ar);
+    b->p.y = g_main_branchs->p.y + p.x * (glfloat)sin(ar) + p.y * (glfloat)cos(ar);
     b->p.z = 0;
 
     b->al = get_al(b, s);
@@ -1080,20 +1080,20 @@ static void
 glgenerate_flower_tree() {
     g_main_branchs = glcreate_branch();
 
-	g_main_branchs->al = g_main_branch_data[0];
-	g_main_branchs->ar = g_main_branch_data[1];
+    g_main_branchs->al = g_main_branch_data[0];
+    g_main_branchs->ar = g_main_branch_data[1];
 
-	g_main_branchs->rx = g_main_branch_data[2];
+    g_main_branchs->rx = g_main_branch_data[2];
     g_main_branchs->ry = g_main_branch_data[3];
 
-	g_main_branchs->wmax = g_main_branch_data[4];
-	g_main_branchs->wmin = g_main_branch_data[5];
+    g_main_branchs->wmax = g_main_branch_data[4];
+    g_main_branchs->wmin = g_main_branch_data[5];
 
     g_main_branchs->p.x = g_main_branch_data[6];
     g_main_branchs->p.y = g_main_branch_data[7];
     g_main_branchs->p.z = 0.0f;
-	g_main_branchs->z = BRANCH_Z;
-	g_main_branchs->isflip = g_main_branch_flip[0];
+    g_main_branchs->z = BRANCH_Z;
+    g_main_branchs->isflip = g_main_branch_flip[0];
 
     generate_main_branch();
     glcreate_main_branch_obj();
@@ -1133,7 +1133,7 @@ glinit_flower_context() {
     gfcontext.pvloc_mat_mf = glGetUniformLocation(gfcontext.pprg.pid, "matrix_mf");
     gfcontext.pvloc_mat_mp = glGetUniformLocation(gfcontext.pprg.pid, "matrix_mp");
     gfcontext.pfloc_lgc = glGetUniformLocation(gfcontext.pprg.pid, "liner_gradient_colors");
-	gfcontext.pfloc_lgs = glGetUniformLocation(gfcontext.pprg.pid, "liner_gradient_stop");
+    gfcontext.pfloc_lgs = glGetUniformLocation(gfcontext.pprg.pid, "liner_gradient_stop");
     glUseProgram(0);
 
     status = glcreate_programe(&(gfcontext.cprg), center_vshader, center_fshader);

@@ -39,7 +39,7 @@ int main( void ) {
         exit( EXIT_FAILURE );
     }
 
-	glinit_tree_context();
+    glinit_tree_context();
 
     while(running) {
         glEnable(GL_CULL_FACE);
@@ -69,15 +69,15 @@ int main( void ) {
 
 static void
 render(void) {
-	glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_POLYGON_SMOOTH);
     glClear(GL_DEPTH_BUFFER_BIT);
-	glClearDepth(1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClearDepth(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glClearColor(1.0, 1.0, 1.0, 1.0);
     glrender_tree_context();
     glutSwapBuffers();
 }
@@ -100,7 +100,7 @@ main(int argc, char** argv)
     }
 //    sversion = glGetString(GL_SHADING_LANGUAGE_VERSION);
 //    fprintf(stdout, "glsl version = %s\n", sversion);
-	glinit_tree_context();
+    glinit_tree_context();
 
     glutMainLoop();
 
@@ -115,16 +115,16 @@ main(int argc, char** argv)
 
 static void
 render(void) {
-	glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
 //    glEnable(GL_POLYGON_SMOOTH);
     glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
+    glEnable(GL_BLEND);
     glClear(GL_DEPTH_BUFFER_BIT);
-	glClearDepth(1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glClearDepth(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthFunc(GL_LESS);
-	glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClearColor(1.0, 1.0, 1.0, 1.0);
     glrender_tree_context();
     glutSwapBuffers();
 }
@@ -138,9 +138,9 @@ main(int argc, char** argv)
     glutCreateWindow("flower");
     glutDisplayFunc(&render);
 
-	glinit_tree_context();
+    glinit_tree_context();
 
-	glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClearColor(1.0, 1.0, 1.0, 1.0);
 
     glutMainLoop();
 

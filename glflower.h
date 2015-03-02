@@ -63,7 +63,7 @@ typedef struct _glflower_context {
     gllocation pvloc_mat_mf;
     gllocation pvloc_mat_mp;
     gllocation pfloc_lgc;
-	gllocation pfloc_lgs;
+    gllocation pfloc_lgs;
     
     glprograme cprg;
     glvbo  cvbo;
@@ -107,7 +107,7 @@ typedef struct _glbranch {
     glfloat al;
     glfloat z;
 
-	bool isflip;
+    bool isflip;
     bool ismain;
     glfloat ar;
     glvec3 p;
