@@ -1,44 +1,26 @@
-/*
- * =====================================================================================
- *
- *       Filename:  glutil.h
- *
- *    Description:  
- *
- *        Version:  1.0
- *        Created:  04/30/2012 23:53:42
- *       Revision:  none
- *       Compiler:  gcc
- *
- *         Author:  WarTalker
- *        Company:  
- *
- * =====================================================================================
- */
-
 #ifndef __GLUTIL_H__
 #define __GLUTIL_H__
 
 #include <stdlib.h>
 
 #if defined(__APPLE_CC__)
-    #include <stdbool.h>
-    #include <OpenGL/gl3.h>
+#include <stdbool.h>
+#include <OpenGL/gl3.h>
 #endif //__APPLE_CC__
 
 
 #ifdef _WIN32
-    #include <GL/glew.h>
-    typedef unsigned char bool;
-    #define true 1
-    #define false 0
+#include <GL/glew.h>
+typedef unsigned char bool;
+#define true 1
+#define false 0
 #endif //_WIN32
 
 #ifdef __linux__
-    #include <GL/gl.h>
-    typedef unsigned char bool;
-    #define true 1
-    #define false 0
+#include <GL/gl.h>
+typedef unsigned char bool;
+#define true 1
+#define false 0
 #endif //__linux__
 
 #define PI (3.1415926f)
@@ -56,32 +38,32 @@ typedef const GLfloat glconst_float;
 typedef int glangle;
 
 typedef struct _glvec3 {
-    glfloat x;
-    glfloat y;
-    glfloat z;
+	glfloat x;
+	glfloat y;
+	glfloat z;
 } glvec3;
 
 typedef struct _glvec4 {
-    glfloat x;
-    glfloat y;
-    glfloat z;
-    glfloat w;
+	glfloat x;
+	glfloat y;
+	glfloat z;
+	glfloat w;
 } glvec4;
 
 typedef struct _glmat4 {
-    glfloat vecs[16];
+	glfloat vecs[16];
 } glmat4;
 
 typedef struct _glvector {
-    size_t size;
-    size_t total;
-    glfloat vec[0];
+	size_t size;
+	size_t total;
+	glfloat vec[0];
 } glvector;
 
 typedef struct _glprograme {
-    glpid pid;
-    glshader vid;
-    glshader fid;
+	glpid pid;
+	glshader vid;
+	glshader fid;
 } glprograme;
 
 void glset_vec3(glvec3 *, glfloat, glfloat, glfloat);
